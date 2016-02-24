@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(decision_maker)
+project(eit)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -12,7 +14,11 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   genmsg
   geometry_msgs
+  k2_client
+  tf
 )
+
+find_package(Jsoncpp REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -104,10 +110,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  #INCLUDE_DIRS include
-  #LIBRARIES decision_maker
-  #CATKIN_DEPENDS rosaria roscpp rospy std_msgs
-#  DEPENDS system_lib
+  INCLUDE_DIRS include
+  LIBRARIES decision_maker
+  CATKIN_DEPENDS k2_client roscpp rospy std_msgs tf
+  DEPENDS system_lib
 )
 
 ###########
@@ -118,7 +124,8 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
-  ${catkin_INCLUDE_DIRS} /home/eit/k2_client/include
+  ${catkin_INCLUDE_DIRS}
+  ${JSONCPP_INCLUDE_DIR}
 )
 
 ## Declare a C++ library
