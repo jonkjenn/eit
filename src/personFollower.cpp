@@ -4,6 +4,9 @@
 #include <geometry_msgs/Twist.h>
 #include <tf/transform_listener.h>
 #include <signal.h>
+#include <string>
+
+using namespace std;
 //#include <algorithm> // min and max
 
 ros::Publisher personPos_pub;
@@ -64,6 +67,7 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
     if(s != -1){
 		//count = 0;
 		// Set the angular velocity
+	    	ROS_INFO_STREAM(msg.bodies[s].jointPositions[0].position.z);
 		if(msg.bodies[s].jointPositions[0].position.x >= 0.2){
 			vel_msg.angular.z = 0.18;
 			aboveAngle = true;
@@ -95,7 +99,10 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
     }
 
 	// Publish if there is a new state
+	ROS_INFO_STREAM(prevAboveAngle);
+	ROS_INFO_STREAM(aboveAngle);
 	if(prevAboveAngle != aboveAngle || prevAboveLength != aboveLength || s == -1){
+		ROS_INFO_STREAM("Publishing message");
 		personPos_pub.publish(vel_msg);
 	}
 	prevAboveAngle = aboveAngle;
