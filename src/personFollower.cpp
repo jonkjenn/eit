@@ -1,78 +1,132 @@
-//#include <math.h>
-
 #include "ros/ros.h"
 #include <k2_client/k2_client.h>
 #include <k2_client/BodyArray.h>
 #include <geometry_msgs/Twist.h>
 #include <tf/transform_listener.h>
+#include <signal.h>
+//#include <algorithm> // min and max
 
-// Set up the publisher that publishes to the personPos topic
 ros::Publisher personPos_pub;
 geometry_msgs::Twist vel_msg;
+int s = -1;
+bool aboveAngle = false;
+bool aboveLength = false;
+bool prevAboveAngle = false;
+bool prevAboveLength = false;
 
-// Subscriber callback function for recieving BodyArray msg from k2_client
+//int count = 0;
+int underLenCount = 0;
+
+void watchdog(int sig){
+	vel_msg.linear.x = 0; 
+	vel_msg.linear.y = 0; 
+    vel_msg.linear.z = 0; 
+    vel_msg.angular.x = 0;
+    vel_msg.angular.y = 0;
+	vel_msg.angular.z = 0;
+	personPos_pub.publish(vel_msg);
+}
+	
 void bodies_sub_cb(const k2_client::BodyArray msg){
-  ROS_INFO_NAMED("personFollower", "personFollower: Received bodyArray");
-  int s = -1;
+    //ROS_INFO_NAMED("personFollower", "personFollower: Received bodyArray");
 
-  // Initiate zero volocity
-  vel_msg.linear.x = 0; // x is horizontal position
-  vel_msg.linear.y = 0; 
-  vel_msg.linear.z = 0; 
-  vel_msg.angular.x = 0;
-  vel_msg.angular.y = 0;
-  vel_msg.angular.z = 0;
+	alarm(1);
+	//++count;
+	
+    vel_msg.linear.y = 0; 
+    vel_msg.linear.z = 0; 
+    vel_msg.angular.x = 0;
+    vel_msg.angular.y = 0;
 
-  // If a person is being tracked by the Kinect, move towards this person.
-  for(int i = 0; i <= 6; i++){
-    if(msg.bodies[i].isTracked){
-      ROS_INFO_NAMED("personFollower", "personFollower: Found tracked person");
-      s = i;
-      break;
+	// Continue to track the same person, or find a new person to track (if any)
+    if(s != -1){
+		if(msg.bodies[s].isTracked == 0){
+			s = -1;
+			ROS_INFO_NAMED("personFollower", "personFollower: tracking ended");
+		}
+	}
+	if(s == -1){
+		//if(count > 10){
+			vel_msg.linear.x = 0;
+			vel_msg.angular.z = 0;
+		//}
+		aboveAngle = false;
+		aboveLength = false;
+		for(int i = 0; i < 6; i++){
+			if(msg.bodies[i].isTracked == 1){
+				s = i;
+				ROS_INFO_NAMED("personFollower", "personFollower: tracking new person");
+				break;
+			}
+		}
     }
-  }
-  if(s != -1){	
-
-    // jointPositions[3] is the persons "head". See startBody.cpp in k2_client package
-    // int angle = atan(msg.bodies[s].jointPositions[3].position.x / msg.bodies[s].jointPositions[3].position.z);
-
-    // Turn robot in order to make the robot face the person beiing tracked 
-    if(msg.bodies[s].jointPositions[3].position.x > 0.5){
-      vel_msg.angular.z = 0.3;
-    } 
-    else if(msg.bodies[s].jointPositions[3].position.x < -0.5){
-      vel_msg.angular.z = -0.3;
+	// Set the velocities
+    if(s != -1){
+		//count = 0;
+		// Set the angular velocity
+		if(msg.bodies[s].jointPositions[0].position.x >= 0.2){
+			vel_msg.angular.z = 0.18;
+			aboveAngle = true;
+		} 
+		else if(msg.bodies[s].jointPositions[0].position.x <= -0.2){
+			vel_msg.angular.z = -0.18;
+			aboveAngle = true;
+		}
+		else{
+			vel_msg.angular.z = 0;	
+			aboveAngle = false;
+			//personPos_pub.publish(vel_msg);
+		}
+		// Set the forward velocity
+		if(msg.bodies[s].jointPositions[0].position.z >= 1.5){
+			vel_msg.linear.x = 0.18; //msg.bodies[s].jointPositions[3].position.z/7;
+			aboveLength = true;
+			underLenCount = 0;
+		}
+		else if(msg.bodies[s].jointPositions[0].position.z < 1.4){
+			++underLenCount;
+			if(underLenCount > 3){
+				vel_msg.linear.x = 0;
+				aboveLength = false;
+				underLenCount = 0;
+			}
+			//personPos_pub.publish(vel_msg);
+		}
     }
-    // Move robot towards person as a function of the distance between robot and person. 
-    if(msg.bodies[s].jointPositions[3].position.z > 1.2){
-      vel_msg.linear.x = msg.bodies[s].jointPositions[3].position.z/10; //0.3;	
-    }
-  }
-  // Publish velocity to RosAria cmd_vel
-  personPos_pub.publish(vel_msg);
+
+	// Publish if there is a new state
+	if(prevAboveAngle != aboveAngle || prevAboveLength != aboveLength || s == -1){
+		personPos_pub.publish(vel_msg);
+	}
+	prevAboveAngle = aboveAngle;
+	prevAboveLength = aboveLength;
 }
 
+
 int main(int argc,char **argv){
-  ros::init(argc,argv,"personFollower");
-  ros::NodeHandle n;
+	ros::init(argc,argv,"personFollower");
+	ros::NodeHandle n;
 
-  // Set up the publisher that publishes to cmd_vel topic which RosAria subscribes to
-  personPos_pub = n.advertise<geometry_msgs::Twist>("RosAria/cmd_vel",1);
+	// Set up watchdog
+	signal(SIGALRM, watchdog);
+	alarm(3);
 
-  // Subsribe to topic "bodyArray" published by k2_klient package node startBody.cpp
-  ros::Subscriber bodies_sub = n.subscribe("bodyArray", 1, bodies_sub_cb);
+	// Set up velocity command publisher
+	personPos_pub = n.advertise<geometry_msgs::Twist>("RosAria/cmd_vel",1);
 
-  ros::Rate loop_rate(20); //0.1
+	// Subsribe to topic "bodyArray" published by k2_klient package node startBody.cpp
+	ros::Subscriber bodies_sub = n.subscribe("head/kinect2/bodyArray", 1, bodies_sub_cb); 
 
-  // Run the ROS node
-  ROS_INFO_NAMED("personFollower", "personFollower: Running ROS node...");
-  while (ros::ok()){
-    ros::spinOnce();
-    loop_rate.sleep();
-  }
-  //ros::spin();
+	ros::Rate loop_rate(6); //0.1
 
-  ROS_INFO_NAMED("personFollower",  "personFollower: Quitting... \n" );
+	ROS_INFO_NAMED("personFollower", "personFollower: Running ROS node...");
+	while (ros::ok()){
+		ros::spinOnce();
+		loop_rate.sleep();
+	}
+	//ros::spin();
 
-  return 0;
+	ROS_INFO_NAMED("personFollower",  "personFollower: Quitting... \n" );
+
+	return 0;
 }   
