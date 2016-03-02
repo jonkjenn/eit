@@ -6,12 +6,21 @@
 #include <tf/transform_listener.h>
 #include <signal.h>
 #include <string>
+//#include "pid.h"
 
 using namespace std;
 //#include <algorithm> // min and max
 
 ros::Publisher personPos_pub;
 geometry_msgs::Twist vel_msg;
+
+ros::Time prev_time;
+float prev_vel_z;
+float vel_inc = 0.05;
+float vel_target = 0.3;
+//pid pid(0.30,0.5,0.1,0.1,0,0.3);
+
+
 int s = -1;
 bool aboveAngle = false;
 bool aboveLength = false;
@@ -33,6 +42,23 @@ void watchdog(int sig){
 
 void pose_sub_cb(const nav_msgs::Odometry::ConstPtr& msg){
   ROS_INFO_STREAM("Got odometry");
+
+  float vel_x = msg->twist.twist.linear.x;
+  float der_vel =  vel_x - prev_vel_x;
+
+  ros::Time t = msg->header.stamp.to_sec();
+
+  float sec = (t-prev_time).to_sec();
+
+  if(vel_x - vel_target > -vel_inc){
+    vel_x+=vel_inc;
+  }
+  else if(vel_x - vel_target < vel_inc){
+    vel_x-=vel_inc;
+  }
+
+  prev_vel_x = msg->twist.twist.linear.x;
+  prev_time = t;
 }
 
 void bodies_sub_cb(const k2_client::BodyArray msg){
@@ -118,6 +144,8 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
 int main(int argc,char **argv){
   ros::init(argc,argv,"personFollower");
   ros::NodeHandle n;
+
+  prev_time = ros::Time::now();
 
   // Set up watchdog
   signal(SIGALRM, watchdog);
