@@ -3,21 +3,28 @@
 #include <vector>
 #include <string>
 #include "rosaria/BumperState.h"
-
-
-
-#include "ros/ros.h"
 #include "std_msgs/String.h"
 
-/**
- * This tutorial demonstrates simple receipt of messages over the ROS system.
- */
-// %Tag(CALLBACK)%
-void chatterCallback(const std_msgs::String::ConstPtr& msg)
+
+void chatterCallback(const k2_client::BodyArray msg)
 {
+  //gjenkjenne gesturer fra kinnect: 
+  
+  //vinking
+  
+  
+  
+  
+  
+  
   ROS_INFO("I heard: [%s]", msg->data.c_str());
+  
+  
+  
+  
+  
+  
 }
-// %EndTag(CALLBACK)%
 
 int main(int argc, char **argv)
 {
