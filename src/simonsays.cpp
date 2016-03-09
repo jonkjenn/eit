@@ -6,6 +6,7 @@
 #include "std_msgs/String.h"
 
 
+
 void bodies_sub_cb(const k2_client::BodyArray msg)
 {
   //gjenkjenne gesturer fra kinnect: 
