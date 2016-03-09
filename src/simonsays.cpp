@@ -20,10 +20,13 @@ void bodies_sub_cb(const k2_client::BodyArray msg)
       ROS_INFO("The user is neutral ");
     }
     
-    
-    
-    
-    
+    if(body.activities.eyeleftClosed and body.activities.eyeRightClosed){
+      ROS_INFO("Eye closed af");
+    }
+  
+    if(body.appearance.wearingGlasses){
+      ROS_INFO("Wearing Glases");
+    }
   }
 }
 
