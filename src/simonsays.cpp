@@ -2,7 +2,6 @@
 #include "ros/ros.h"
 #include <vector>
 #include <string>
-#include "rosaria/BumperState.h"
 #include "std_msgs/String.h"
 
 
