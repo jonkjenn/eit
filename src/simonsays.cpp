@@ -6,24 +6,25 @@
 #include "std_msgs/String.h"
 
 
-void chatterCallback(const k2_client::BodyArray msg)
+void bodies_sub_cb(const k2_client::BodyArray msg)
 {
   //gjenkjenne gesturer fra kinnect: 
   
-  //vinking
-  
-  
-  
-  
-  
-  
-  ROS_INFO("I heard: [%s]", msg->data.c_str());
-  
-  
-  
-  
-  
-  
+
+  //happy or neutral
+  for (const auto& body : msg.bodies){
+    if (body.expressions.happy){
+      ROS_INFO("The user eats happymeal ");
+    }
+    else if (body.expressions.neutral){
+      ROS_INFO("The user is neutral ");
+    }
+    
+    
+    
+    
+    
+  }
 }
 
 int main(int argc, char **argv)
@@ -63,7 +64,7 @@ int main(int argc, char **argv)
    * away the oldest ones.
    */
 // %Tag(SUBSCRIBER)%
-  ros::Subscriber sub = n.subscribe("chatter", 1000, chatterCallback);
+  ros::Subscriber sub = n.subscribe("head/kinect2/bodyArray", 1000, bodies_sub_cb);
 // %EndTag(SUBSCRIBER)%
 
   /**
