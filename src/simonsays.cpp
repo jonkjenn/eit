@@ -6,6 +6,8 @@
 #include <stdib.h>
 #include <time.h>
 
+#include <deque>
+
 namespace JointType
 {
          "SpineBase";break;
@@ -91,27 +93,83 @@ enum class Challenge
     ArmsInAir
 };
 
+enum class Gesture
+{
+    Start
+};
+
 std::deque<Challenge> challenges;
+
+void outputUserMessage(const std::string& message)
+{
+    std::cout << message << std::endl;
+}
+
+void challengeCompleted(const Challenge& challenge)
+{
+    outputUserMessage(std::string("Challenge '") + challenge.name() + "' completed!");
+}
+
+void gameCompleted()
+{
+    outputUserMessage("Game completed!");
+}
 
 void evaluateGameState()
 {
     switch (gameState)
     {
         case GameState::NotStarted:
-            if (isStartGestureDetected)
+            if (isGestureDetected(Gesture::Start))
             {
-                challenges = generateChallenges();
-                gameState  = GameState.InGame;
+                if (requestControl())
+                {
+                    challenges = generateChallenges();
+                    gameState  = GameState.InGame;
+                }
+                else
+                {
+                    clearGesture(Gesture::Start);
+                }
             }
             break;
         case GameState::InGame:
             if (!challenges.empty())
             {
+                auto& currentChallenge = *challenges.first();
+                
+                switch (challengeState)
+                {
+                    case ChallengeState::start:
+                        outputUserMessage(currentChallenge.description());
+                        challengeState = ChallengeState::inProgress;
+                        challengeStartTime = currentTime;
+                        break;
+                    case ChallengeState::inProgress:
+                        if (isGestureDetected(currentChallenge.gesture()))
+                        {
+                            challengeCompleted(currentChallenge);
+                            challenges.pop_front();
+                            challengeState = ChallengeState::delayNext;
+                        }
+                        break;
+                    case ChallengeState::delayNext:
+                        // Add delay of X seconds
+                        challengeState = ChallengeState::notStarted;
+                        break;
+                }
+                
                 if (isChallengeCompleted(*challenges.first()))
                 {
                     challenges.pop_front();
                 }
             }
+            else
+            {
+                outputUserMessage(UserMessage::)
+                gameState = GameState::NotStarted;
+            }
+            break;
     }
 }
 
@@ -146,11 +204,7 @@ int main(int argc, char **argv)
         case 2: break;
         
       }
-    
-    
-    
-    
-    
+  
 }
   return 0;
 
