@@ -95,18 +95,23 @@ int main(int argc, char **argv)
 
     ros::spin();
     int RandomStateNumber;
-   
+    bool gameState;
+    int start = 1;
+    
     while (1){
       srand(time(NULL));
       RandomStateNumber = rand() % 5;
       
       switch(start)
       {
-        case 0: default
-        case 1: 
+        case 0: break;
+        case 1: if (gameState){
+          start = 0;
+          break;
+        }
+        case 2: break;
+        
       }
-    
-      
     
     
     
