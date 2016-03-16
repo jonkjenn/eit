@@ -81,22 +81,56 @@ void bodies_sub_cb(const k2_client::BodyArray msg)
 
 }
 
+enum class GameState
+{
+    NotStarted, InGame
+};
 
+enum class Challenge
+{
+    ArmsInAir
+};
 
+std::deque<Challenge> challenges;
+
+void evaluateGameState()
+{
+    switch (gameState)
+    {
+        case GameState::NotStarted:
+            if (isStartGestureDetected)
+            {
+                challenges = generateChallenges();
+                gameState  = GameState.InGame;
+            }
+            break;
+        case GameState::InGame:
+            if (!challenges.empty())
+            {
+                if (isChallengeCompleted(*challenges.first()))
+                {
+                    challenges.pop_front();
+                }
+            }
+    }
+}
 
 int main(int argc, char **argv)
 {
+    ros::init(argc, argv, "listener");
+    ros::NodeHandle n;
     
-  /  ros::init(argc, argv, "listener");
-  ros::NodeHandle n;
-
-  ros::Subscriber sub = n.subscribe("head/kinect2/bodyArray", 1000, bodies_sub_cb);
-
-
-    ros::spin();
+    ros::Subscriber sub = n.subscribe("head/kinect2/bodyArray", 1000, bodies_sub_cb);
+    
     int RandomStateNumber;
     bool gameState;
     int start = 1;
+    
+    while (true)
+    {
+        evaluateGameState();
+        ros::spin();
+    }
     
     while (1){
       srand(time(NULL));
