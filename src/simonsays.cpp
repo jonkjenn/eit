@@ -84,11 +84,6 @@ void bodies_sub_cb(const k2_client::BodyArray msg)
 
 }
 
-enum class GameState
-{
-    NotStarted, InGame
-};
-
 enum class Challenge
 {
     ArmsInAir
@@ -100,7 +95,7 @@ enum class Gesture
 };
 
 std::deque<Challenge> challenges;
-std::chrono::time_point<std::chrono::steady_clock> challengeStartTime;
+
 
 void outputUserMessage(const std::string& message)
 {
@@ -116,6 +111,116 @@ void gameCompleted()
 {
     outputUserMessage("Game completed!");
 }
+
+class Challenge
+{
+    public:
+        Challenge æ@æø.,-,–…‚–…‚–·„—·„–…‚
+};
+
+class Game
+{
+    public:
+        enum class State
+        {
+            notStarted, beginChallenge, 
+        };
+
+        Game(ros::NodeHandle&   node,
+             GestureController& gestureController)
+            : state_{State::notStarted},
+              node_{node},
+              gestureController_{gestureController}
+        {}
+
+        void evaluate()
+        {
+            switch (state_)
+            {
+                case State::notStarted:
+                {
+                    if (gestureController.hasDetected(GestureController::Gestures::start))
+                    {
+                        if (requestControl())
+                        {
+                            challenges_ = generateChallenges();
+                            state_      = State::challengeBegin;
+                        }
+                        else
+                        {
+                            gestureController_.clear(GestureController::Gestures::start);
+                        }
+                    }
+                    break;
+                }
+                case State::challengeBegin:
+                {
+                    if (!challenges_.empty())
+                    {
+                        auto& currentChallenge = *challenges_.first();
+                        
+                        startTime_ = std::chrono::steady_clock::now();
+                        gestureController_.clearGesture(currentChallenge.gesture);
+                        currentChallenge->begin();
+                        state_ = State::challengeInProgress;
+                    }
+                    else
+                    {
+                        state_ = State::gameCompleted;
+                    }
+                    break;
+                }
+                case State::challengeInProgress:
+                {
+                    auto& currentChallenge = *challenges_.first();
+                    const auto currentTime = std::chrono::steady_clock::now();
+
+                    double challengeTimeout;
+                    node.param("challenge_timeout", challengeTimeout, 10.0);
+
+                    if (currentTime <= startTime_ + std::chrono::duration<double>{challengeTimeout})
+                    {
+                        if (challenge->isCompleted())
+                        {
+                            challengeCompleted(challenge);
+                        }
+                    }
+                    else
+                    {
+                        challengeTimeout(challenge);
+                        startTime_ = currentTime;
+                        state_ = State::paused;
+                    }
+
+                    break;
+                }
+                case State::paused:
+                {
+                    const auto currentTime = std::chrono::steady_clock::now();
+
+                    double gameOverTimeout;
+                    node.param("game_over_timeout", gameOverTimeout, 5.0);
+
+                    if (currentTime > startTime_ + gameOverTimeout)
+                    {
+                        state_ = State::notStarted;
+                        challenges_.clear();
+                    }
+
+                    break;
+                }
+            }
+        }
+
+    private:
+        ros::NodeHandle&   node_;
+        GestureController& gestureController_;
+        
+        State                                              state_;
+        std::deque<Challenge>                              challenges_;
+        std::chrono::time_point<std::chrono::steady_clock> startTime_;
+
+};
 
 void evaluateGameState(ros::NodeHandle& node, GameState& gameState)
 {
@@ -139,7 +244,7 @@ void evaluateGameState(ros::NodeHandle& node, GameState& gameState)
             if (!challenges.empty())
             {
                 auto& currentChallenge = *challenges.first();
-                const auto currentTime = std::chrono::steady_clock::now();
+                
                 
                 switch (challengeState)
                 {
@@ -156,7 +261,7 @@ void evaluateGameState(ros::NodeHandle& node, GameState& gameState)
                             challengeState = ChallengeState::delayNext;
                         }
                         else
-                        {
+                        {const auto currentTime = std::chrono::steady_clock::now();
                             double challengeTimeout;
                             node.param("challenge_timeout", challengeTimeout, 10.0);
                             
@@ -225,4 +330,3 @@ int main(int argc, char **argv)
   return 0;
 
 }
-
