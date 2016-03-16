@@ -6,8 +6,31 @@
 
 namespace JointType
 {
-  const int SpineBase = 0;
-  const int SpineMid = 1;
+                         "SpineBase";break;
+                          "SpineMid";break;
+                         "Neck";break;
+                          "Head";break;
+                          "ShoulderLeft";break;
+                         "ElbowLeft";break;
+                      "WristLeft";break;
+                     l"HandLeft";break;
+                        "ShoulderRight";break;
+                = "ElbowRight";break;
+                  "WristRight";break;
+                      "HandRight";break;
+                     "HipLeft";break;
+          "KneeLeft";break;
+               "AnkleLeft";break;
+                   "FootLeft";break;
+                "HipRight";break;
+                      "KneeRight";break;
+                       "AnkleRight";break;
+                        bool "FootRight";break;
+                       bool "SpineShoulder";break;
+                        bool"HandTipLeft";break;
+                        bool "ThumbLeft";break;
+                       bool "HandTipRight";break;
+                        bool "ThumbRight";break;
 }
 
 void bodies_sub_cb(const k2_client::BodyArray msg)
