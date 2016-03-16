@@ -4,7 +4,11 @@
 #include <string>
 #include "std_msgs/String.h"
 
-
+namespace JointType
+{
+  const int SpineBase = 0;
+  const int SpineMid = 1;
+}
 
 void bodies_sub_cb(const k2_client::BodyArray msg)
 {
