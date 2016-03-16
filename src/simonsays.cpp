@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 #include "std_msgs/String.h"
+#include <stdib.h>
+#include <time.h>
 
 namespace JointType
 {
@@ -32,6 +34,10 @@ namespace JointType
                        bool "HandTipRight";break;
                         bool "ThumbRight";break;
 }
+
+
+
+
 
 void bodies_sub_cb(const k2_client::BodyArray msg)
 {
@@ -88,6 +94,12 @@ int main(int argc, char **argv)
 
 
     ros::spin();
+    int RandomStateNumber;
+   
+    while (1){
+      srand(time(NULL));
+      RandomStateNumber = rand() % 5;
+    }
 
   return 0;
 }
