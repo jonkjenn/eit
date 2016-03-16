@@ -99,8 +99,21 @@ int main(int argc, char **argv)
     while (1){
       srand(time(NULL));
       RandomStateNumber = rand() % 5;
-    }
-
+      
+      switch(start)
+      {
+        case 0: default
+        case 1: 
+      }
+    
+      
+    
+    
+    
+    
+    
+}
   return 0;
+
 }
 
