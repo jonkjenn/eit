@@ -8,31 +8,31 @@
 
 namespace JointType
 {
-                         "SpineBase";break;
-                          "SpineMid";break;
-                         "Neck";break;
-                          "Head";break;
-                          "ShoulderLeft";break;
-                         "ElbowLeft";break;
-                      "WristLeft";break;
-                     l"HandLeft";break;
-                        "ShoulderRight";break;
-                = "ElbowRight";break;
-                  "WristRight";break;
-                      "HandRight";break;
-                     "HipLeft";break;
-          "KneeLeft";break;
-               "AnkleLeft";break;
-                   "FootLeft";break;
-                "HipRight";break;
-                      "KneeRight";break;
-                       "AnkleRight";break;
-                        bool "FootRight";break;
-                       bool "SpineShoulder";break;
-                        bool"HandTipLeft";break;
-                        bool "ThumbLeft";break;
-                       bool "HandTipRight";break;
-                        bool "ThumbRight";break;
+         "SpineBase";break;
+         "SpineMid";break;
+         "Neck";break;
+         "Head";break;
+         "ShoulderLeft";break;
+         "ElbowLeft";break;
+         "WristLeft";break;
+         "HandLeft";break;
+         "ShoulderRight";break;
+         "ElbowRight";break;
+         "WristRight";break;
+         "HandRight";break;
+         "HipLeft";break;
+         "KneeLeft";break;
+         "AnkleLeft";break;
+         "FootLeft";break;
+         "HipRight";break;
+         "KneeRight";break;
+         "AnkleRight";break;
+         "FootRight";break;
+         "SpineShoulder";break;
+         "HandTipLeft";break;
+         "ThumbLeft";break;
+         "HandTipRight";break;
+         "ThumbRight";break;
 }
 
 
