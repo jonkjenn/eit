@@ -6,6 +6,7 @@
 #include <stdib.h>
 #include <time.h>
 
+#include <chrono>
 #include <deque>
 
 namespace JointType
@@ -99,6 +100,7 @@ enum class Gesture
 };
 
 std::deque<Challenge> challenges;
+std::chrono::time_point<std::chrono::steady_clock> challengeStartTime;
 
 void outputUserMessage(const std::string& message)
 {
@@ -115,35 +117,36 @@ void gameCompleted()
     outputUserMessage("Game completed!");
 }
 
-void evaluateGameState()
+void evaluateGameState(ros::NodeHandle& node, GameState& gameState)
 {
     switch (gameState)
     {
-        case GameState::NotStarted:
-            if (isGestureDetected(Gesture::Start))
+        case GameState::notStarted:
+            if (isGestureDetected(Gesture::start))
             {
                 if (requestControl())
                 {
                     challenges = generateChallenges();
-                    gameState  = GameState.InGame;
+                    gameState  = GameState.inGame;
                 }
                 else
                 {
-                    clearGesture(Gesture::Start);
+                    clearGesture(Gesture::start);
                 }
             }
             break;
-        case GameState::InGame:
+        case GameState::inGame:
             if (!challenges.empty())
             {
                 auto& currentChallenge = *challenges.first();
+                const auto currentTime = std::chrono::steady_clock::now();
                 
                 switch (challengeState)
                 {
                     case ChallengeState::start:
                         outputUserMessage(currentChallenge.description());
                         challengeState = ChallengeState::inProgress;
-                        challengeStartTime = currentTime;
+                        challengeStartTime = std:chrono::steady_clock::now();
                         break;
                     case ChallengeState::inProgress:
                         if (isGestureDetected(currentChallenge.gesture()))
@@ -152,6 +155,19 @@ void evaluateGameState()
                             challenges.pop_front();
                             challengeState = ChallengeState::delayNext;
                         }
+                        else
+                        {
+                            double challengeTimeout;
+                            node.param("challenge_timeout", challengeTimeout, 10.0);
+                            
+                            if (currentTime >= challengeStartTime + challengeTimeout)
+                            {
+                                gameFailed();
+                                
+                            }
+                        }
+                        
+                        
                         break;
                     case ChallengeState::delayNext:
                         // Add delay of X seconds
