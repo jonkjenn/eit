@@ -115,7 +115,17 @@ void gameCompleted()
 class Challenge
 {
     public:
-        Challenge æ@æø.,-,–…‚–…‚–·„—·„–…‚
+        virtual ~Challenge {}
+        virtual void begin()       = 0;
+        virtual void isCompleted() = 0; 
+        virtual void end()         = 0;
+};
+
+class GestureChallenge : public Challenge
+{
+    public:
+        GestureChallenge(const Gesture)
+
 };
 
 class Game
@@ -330,3 +340,4 @@ int main(int argc, char **argv)
   return 0;
 
 }
+ef
