@@ -56,6 +56,7 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
     time_wave[bodyNumber] ++;
     if (time_wave[bodyNumber]==1) {
         if(s != -1 && gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
+            ROS_INFO("Startet");
             if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
                 start_wave[bodyNumber] = 1;
             }
@@ -69,8 +70,8 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
     else{
         if(s != -1 && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
             if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false){
-                ROS_INFO("Startet");
                 if(start_wave[bodyNumber] == 2){
+                    ROS_INFO("Startet");
                     if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
                         start_wave[bodyNumber] = 1;
                     }
