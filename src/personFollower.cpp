@@ -37,6 +37,21 @@ void watchdog(int sig){
   personPos_pub.publish(vel_msg);
 }
 
+bool gestureTestMidle(const k2_client::Body& body){
+    const auto& shoulderRight = body.jointPositions[8];
+    const auto& handRight = body.jointPositions[11];
+    const auto& shoulderLeft = body.jointPositions[4];
+    const auto& handLeft = body.jointPositions[7];
+    
+    if(abs(shoulderRight.position.x - handRight.position.x) <= 0.2 && abs(shoulderLeft.position.x - handLeft.position.x) <= 0.2){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+
 void bodies_sub_cb(const k2_client::BodyArray msg){
   //ROS_INFO_NAMED("personFollower", "personFollower: Received bodyArray");
 
@@ -71,7 +86,7 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
     }
   }
   // Set the velocities
-  if(s != -1){
+  if(s != -1 && gestureTestMidle(msg.bodies[s])){
     //count = 0;
     // Set the angular velocity
     //ROS_INFO_STREAM(msg.bodies[s].jointPositions[0].position.z);
