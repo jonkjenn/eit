@@ -144,12 +144,14 @@ add_executable(personfollower src/personFollower.cpp)
 add_executable(kinectsimulator src/kinectsimulator.cpp)
 add_executable(gestures src/gestures.cpp)
 #add_executable(simonsays src/simonsays.cpp)
+add_executable(selfie src/selfieNode.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(personfollower ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(kinectsimulator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(gestures ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(selfie ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(personfollower
@@ -163,6 +165,9 @@ add_dependencies(gestures ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_
    ${catkin_LIBRARIES}
  )
 
+ target_link_libraries(selfie
+   ${catkin_LIBRARIES}
+ )
 #############
 ## Install ##
 #############

@@ -43,7 +43,7 @@ bool gestureTestMidle(const k2_client::Body& body){
     const auto& shoulderLeft = body.jointPositions[4];
     const auto& handLeft = body.jointPositions[7];
     
-    if(abs(shoulderRight.position.x - handRight.position.x) <= 0.2 && abs(shoulderLeft.position.x - handLeft.position.x) <= 0.2){
+    if(abs(shoulderRight.position.y - handRight.position.y) <= 0.2 && abs(shoulderLeft.position.y - handLeft.position.y) <= 0.2){
         return true;
     }
     else{
