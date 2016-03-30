@@ -55,7 +55,7 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
     
     time_wave[bodyNumber] ++;
     if (time_wave[bodyNumber]==1) {
-        if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false && s != -1 && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
+        if(s != -1 && gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
             if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
                 start_wave[bodyNumber] = 1;
             }
@@ -68,8 +68,8 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
     }
     else{
         if(s != -1 && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
-            ROS_INFO("Startet");
             if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false){
+                ROS_INFO("Startet");
                 if(start_wave[bodyNumber] == 2){
                     if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
                         start_wave[bodyNumber] = 1;
@@ -84,14 +84,14 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
                     if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
                         start_wave[bodyNumber] = 1;
                         lastTime_wave2[bodyNumber]=time_wave[bodyNumber];
-                        count_wave[bodyNumber] +=1;
+                        count_wave[bodyNumber]++;
                     }
                 }
                 else{
                     if(gestureTestRight(elbowRight.position.y, elbowRight.position.x, handRight.position.y, handRight.position.x)){
                         start_wave[bodyNumber] = 0;
                         lastTime_wave2[bodyNumber]=time_wave[bodyNumber];
-                        count_wave[bodyNumber] +=1;
+                        count_wave[bodyNumber] ++;
                     }
                 }
             }
