@@ -68,6 +68,7 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
     }
     else{
         if(s != -1 && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
+            ROS_INFO("Startet");
             if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false){
                 if(start_wave[bodyNumber] == 2){
                     if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
