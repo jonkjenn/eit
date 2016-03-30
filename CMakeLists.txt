@@ -143,6 +143,7 @@ SET(CMAKE_CXX_FLAGS "-std=c++0x")
 add_executable(personfollower src/personFollower.cpp)
 add_executable(kinectsimulator src/kinectsimulator.cpp)
 add_executable(gestures src/gestures.cpp)
+#add_executable(simonsays src/simonsays.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above

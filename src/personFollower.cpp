@@ -41,14 +41,15 @@ void watchdog(int sig){
 }
 
 void pose_sub_cb(const nav_msgs::Odometry::ConstPtr& msg){
-  ROS_INFO_STREAM("Got odometry");
+  //ROS_INFO_STREAM("Got odometry");
 
   float vel_x = msg->twist.twist.linear.x;
+  float prev_vel_x = 0;
   float der_vel =  vel_x - prev_vel_x;
 
-  ros::Time t = msg->header.stamp.to_sec();
+  ros::Time t;//msg->header.stamp.to_sec();
 
-  float sec = (t-prev_time).to_sec();
+  float sec = 0;//(t-prev_time).to_sec();
 
   if(vel_x - vel_target > -vel_inc){
     vel_x+=vel_inc;
@@ -76,7 +77,7 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
   if(s != -1){
     if(msg.bodies[s].isTracked == 0){
       s = -1;
-      ROS_INFO_NAMED("personFollower", "personFollower: tracking ended");
+      //ROS_INFO_NAMED("personFollower", "personFollower: tracking ended");
     }
   }
   if(s == -1){
@@ -89,7 +90,7 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
     for(int i = 0; i < 6; i++){
       if(msg.bodies[i].isTracked == 1){
         s = i;
-        ROS_INFO_NAMED("personFollower", "personFollower: tracking new person");
+        //ROS_INFO_NAMED("personFollower", "personFollower: tracking new person");
         break;
       }
     }
@@ -130,10 +131,10 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
   }
 
   // Publish if there is a new state
-  ROS_INFO_STREAM(prevAboveAngle);
-  ROS_INFO_STREAM(aboveAngle);
+  //ROS_INFO_STREAM(prevAboveAngle);
+  //ROS_INFO_STREAM(aboveAngle);
   if(prevAboveAngle != aboveAngle || prevAboveLength != aboveLength || s == -1){
-    ROS_INFO_STREAM("Publishing message");
+    //ROS_INFO_STREAM("Publishing message");
     personPos_pub.publish(vel_msg);
   }
   prevAboveAngle = aboveAngle;
