@@ -15,6 +15,7 @@ using namespace std;
 
 ros::Publisher personPos_pub;
 geometry_msgs::Twist vel_msg;
+geometry_msgs::Twist prev_vel_msg;
 
 ros::Time prev_time;
 float prev_vel_z;
