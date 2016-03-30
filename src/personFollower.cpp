@@ -90,6 +90,7 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
 	if(s != -1){
 		if(msg.bodies[s].isTracked == 0){
 			s = -1;
+			checkCount = 1;
 			//ROS_INFO_NAMED("personFollower", "personFollower: tracking ended");
 		}
 	}
@@ -103,6 +104,7 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
 		for(int i = 0; i < 6; i++){
 			if(msg.bodies[i].isTracked && gestureTestMidle(msg.bodies[i])){
 				s = i;
+				checkCount = 0;
 				//ROS_INFO_NAMED("personFollower", "personFollower: tracking new person");
 				break;
 			}
@@ -142,12 +144,20 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
 			//personPos_pub.publish(vel_msg);
 		}
 	}
-
+	if(checkCount > 0 && checkCount < 2*loop_rate){
+    		checkCount++;
+    		vel_msg = prev_vel_msg;
+	}
+  	else if(checkCount >= 2*loop_rate){
+    	checkCount = 0;
+  	}
+	
 	// Publish if there is a new state
 	//ROS_INFO_STREAM(prevAboveAngle);
 	//ROS_INFO_STREAM(aboveAngle);
 	if(prevAboveAngle != aboveAngle || prevAboveLength != aboveLength || s == -1){
 		//ROS_INFO_STREAM("Publishing message");
+		prev_vel_msg = vel_msg;
 		personPos_pub.publish(vel_msg);
 	}
 	prevAboveAngle = aboveAngle;
