@@ -116,7 +116,7 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
       aboveLength = true;
       underLenCount = 0;
     }
-    else if(msg.bodies[s].jointPositions[0].position.z < 1.4){
+    else if(msg.bodies[s].jointPositions[0].position.z < 1.5){
       ++underLenCount;
       if(underLenCount > 3){
         vel_msg.linear.x = 0;
