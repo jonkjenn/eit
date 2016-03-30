@@ -19,7 +19,7 @@ geometry_msgs::Twist vel_msg;
 ros::Time prev_time;
 float prev_vel_z;
 
-
+int checkCount = 0;
 int s = -1;
 bool aboveAngle = false;
 bool aboveLength = false;
