@@ -231,7 +231,6 @@ int main(int argc,char **argv){
                     count_stop--;
                     bodyArrayHistory.pop_back();
                 }
-
                 if (count_stop > 30 || afk > 90) {
                     state = 0;
                     alive = true;
@@ -243,14 +242,10 @@ int main(int argc,char **argv){
             }
             bodyArrayNew.clear();
         }
-        
-        if (bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize{
+        if (bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize){
             bodyArrayHistory.pop_back();
         }
     }
-    
-    
     ROS_INFO_NAMED("personGesture",  "personGesture: Quitting... \n" );
-    
     return 0;
 }
