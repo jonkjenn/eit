@@ -78,7 +78,7 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
     aboveAngle = false;
     aboveLength = false;
     for(int i = 0; i < 6; i++){
-      if(msg.bodies[i].isTracked == 1){
+      if(msg.bodies[i].isTracked && && gestureTestMidle(msg.bodies[s])){
         s = i;
         //ROS_INFO_NAMED("personFollower", "personFollower: tracking new person");
         break;
@@ -86,7 +86,7 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
     }
   }
   // Set the velocities
-  if(s != -1 && gestureTestMidle(msg.bodies[s])){
+  if(s != -1){
     //count = 0;
     // Set the angular velocity
     //ROS_INFO_STREAM(msg.bodies[s].jointPositions[0].position.z);
