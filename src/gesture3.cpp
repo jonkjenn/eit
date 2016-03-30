@@ -228,7 +228,7 @@ int main(int argc,char **argv){
                 }
                 bodyArrayHistory.push_front(bodyArray);
                 const auto& historyBack = bodyArrayHistory.back();
-                if(bodyArrayHistory.size >= Constants::bodyArrayHistoryMaxSize && gestureStop(historyBack.bodies[s])){
+                if(bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize && gestureStop(historyBack.bodies[s])){
                     count_stop--;
                     bodyArrayHistory.pop_back();
                 }
