@@ -2,6 +2,8 @@
 #include <k2_client/k2_client.h>
 #include <k2_client/BodyArray.h>
 #include <geometry_msgs/Twist.h>
+#include <sensor_msgs/LaserScan.h>
+#include <rosaria/BumperState.h>
 #include <nav_msgs/Odometry.h>
 #include <tf/transform_listener.h>
 #include <signal.h>
@@ -51,6 +53,11 @@ bool gestureTestMidle(const k2_client::Body& body){
     }
 }
 
+void laser_sub_cb(){
+}
+
+void bumper_state_sub_cb(){
+}
 
 void bodies_sub_cb(const k2_client::BodyArray msg){
   //ROS_INFO_NAMED("personFollower", "personFollower: Received bodyArray");
@@ -78,7 +85,7 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
     aboveAngle = false;
     aboveLength = false;
     for(int i = 0; i < 6; i++){
-      if(msg.bodies[i].isTracked && && gestureTestMidle(msg.bodies[s])){
+      if(msg.bodies[i].isTracked && gestureTestMidle(msg.bodies[s])){
         s = i;
         //ROS_INFO_NAMED("personFollower", "personFollower: tracking new person");
         break;
@@ -148,6 +155,7 @@ int main(int argc,char **argv){
   // Subsribe to topic "bodyArray" published by k2_klient package node startBody.cpp
   ros::Subscriber bodies_sub = n.subscribe("head/kinect2/bodyArray", 1, bodies_sub_cb); 
   ros::Subscriber laser_sub = n.subscribe("RosAria/S3Series_1_laserscan", 1, laser_sub_cb); 
+  ros::Subscriber bumper_sub = n.subscribe("RosAria/bumper_state", 1, bumper_state_sub_cb);
 
   ros::Rate loop_rate(30); //0.1
 
