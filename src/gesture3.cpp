@@ -206,9 +206,9 @@ int main(int argc,char **argv){
                 }
                 bodyArrayHistory.push_front(bodyArray);
             }
-            bodyArrayNew.clear;
+            bodyArrayNew.clear();
             if (!alive) {
-                bodyArrayHistory.clear;
+                bodyArrayHistory.clear();
             }
             
         }
@@ -236,15 +236,15 @@ int main(int argc,char **argv){
                     state = 0;
                     alive = true;
                     count_stop = 0;
-                    bodyArrayHistory.clear;
+                    bodyArrayHistory.clear();
                     ROS_INFO("Follow stopped");
                     break;
                 }
             }
-            bodyArrayNew.clear;
+            bodyArrayNew.clear();
         }
         
-        if (bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize){
+        if (bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize{
             bodyArrayHistory.pop_back();
         }
     }
