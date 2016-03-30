@@ -17,7 +17,7 @@ int time_wave[6] = {0,0,0,0,0,0};
 int s=-1;
 
 bool gestureTestMidle(double y1, double x1, double y2, double x2){
-    if(abs(x1 - x2) <= 0.05*sqrt((y1-y2)^2 + (x1-x2)^2)){
+    if(abs(x1 - x2) <= 0.05*sqrt(pow((y1-y2),2) + pow((x1-x2),2))){
         return true;
     }
     else{
@@ -26,7 +26,7 @@ bool gestureTestMidle(double y1, double x1, double y2, double x2){
 }
 
 bool gestureTestRight(double y1, double x1, double y2, double x2){
-    if(x1 < x2 && abs(x1 - x2) > 0.05*sqrt((y1-y2)^2 + (x1-x2)^2)){
+    if(x1 < x2 && abs(x1 - x2) > 0.05*sqrt(pow((y1-y2),2) + pow((x1-x2),2))){
         return true;
     }
     else{
@@ -35,7 +35,7 @@ bool gestureTestRight(double y1, double x1, double y2, double x2){
 }
 
 bool gestureTestAbove(double y1, double x1, double y2, double x2){
-    if(y1 > y2 && abs(y1 - y2) > 0.05*sqrt((y1-y2)^2 + (x1-x2)^2)){
+    if(y1 > y2 && abs(y1 - y2) > 0.05*sqrt(pow((y1-y2),2) + pow((x1-x2),2))){
         return true;
     }
     else{
@@ -55,7 +55,7 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
     
     time_wave[bodyNumber] ++;
     if (time_wave[bodyNumber]==1) {
-        if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == FALSE && s != -1 && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
+        if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false && s != -1 && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
             if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
                 start_wave[bodyNumber] = 1;
             }
@@ -68,7 +68,7 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
     }
     else{
         if(s != -1 && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
-            if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == FALSE){
+            if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false){
                 if(start_wave[bodyNumber] == 2){
                     if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
                         start_wave[bodyNumber] = 1;
@@ -125,7 +125,7 @@ bool gestureStop(const k2_client::Body& body){
     const auto& handRight = body.jointPositions[11];
     
     if(handRight.position.z > (shoulderRight.position.z-0.2) && body.handRightState==2){
-        return TRUE;
+        return true;
     }
     else{
         return false;
@@ -181,7 +181,7 @@ int main(int argc,char **argv){
         loop_rate.sleep();
         if(alive){
             for(const auto& bodyArray : bodyArrayNew){
-                for(int i = 0; i <= 6 && q; i++){
+                for(int i = 0; i <= 6; i++){
                     s = -1;
                     if(bodyArray.bodies[i].isTracked){
                         s = i;
@@ -206,9 +206,9 @@ int main(int argc,char **argv){
                 }
                 bodyArrayHistory.push_front(bodyArray);
             }
-            bodyArrayNew.clear;
+            bodyArrayNew.clear();
             if (!alive) {
-                bodyArrayHistory.clear;
+                bodyArrayHistory.clear();
             }
             
         }
@@ -236,15 +236,15 @@ int main(int argc,char **argv){
                     state = 0;
                     alive = true;
                     count_stop = 0;
-                    bodyArrayHistory.clear;
+                    bodyArrayHistory.clear();
                     ROS_INFO("Follow stopped");
                     break;
                 }
             }
-            bodyArrayNew.clear;
+            bodyArrayNew.clear();
         }
         
-        if (bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize){
+        if (bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize{
             bodyArrayHistory.pop_back();
         }
     }
