@@ -147,8 +147,9 @@ int main(int argc,char **argv){
 
   // Subsribe to topic "bodyArray" published by k2_klient package node startBody.cpp
   ros::Subscriber bodies_sub = n.subscribe("head/kinect2/bodyArray", 1, bodies_sub_cb); 
+  ros::Subscriber laser_sub = n.subscribe("RosAria/S3Series_1_laserscan", 1, laser_sub_cb); 
 
-  ros::Rate loop_rate(6); //0.1
+  ros::Rate loop_rate(30); //0.1
 
   ROS_INFO_NAMED("personFollower", "personFollower: Running ROS node...");
   while (ros::ok()){
