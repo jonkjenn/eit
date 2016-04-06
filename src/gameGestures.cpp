@@ -3,7 +3,7 @@ bool gestureLiftRightFoot(cinst k2_client::Body& body){
     const auto& kneeLeft = body.jointPositions[13];
     
     //Sjekker om høyre kne er høyere enn venstre kne
-    if(kneeright.position.y > ((kneeLeft.position.y)0.1) ){
+    if(kneeright.position.y > ((kneeLeft.position.y)+0.1) ){
         return true;
     }
     
