@@ -136,19 +136,7 @@ bool gestureStop(const k2_client::Body& body){
     }
 }
 
-bool gestureKick(cinst k2_client::Body& body){
-    const auto& kneeRight = body.jointPositions[17];
-    const auto& hipRight = body.jointPositions[16];
-    
-    //Sjekker om høyre kne er høyere enn høyre hofte.
-    if(kneeright.position.z > (hipRight.position.z) ){
-        return true
-    }
-    
-    else{
-        return false;
-    }
-}
+
 
 namespace Constants {
     int bodyArrayHistoryMaxSize = 60;
