@@ -226,7 +226,6 @@ int main(int argc,char **argv){
                     }
                 }
                 else{
-                    ROS_INFO_STREAM(afk);
                     afk++;
                 }
                 bodyArrayHistory.push_front(bodyArray);
@@ -250,7 +249,9 @@ int main(int argc,char **argv){
             bodyArrayNew.clear();
         }
         if (bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize){
+            ROS_INFO("Fail?");
             bodyArrayHistory.pop_back();
+            ROS_INFO("Nope");
         }
     }
     ROS_INFO_NAMED("personGesture",  "personGesture: Quitting... \n" );
