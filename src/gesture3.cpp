@@ -212,6 +212,7 @@ int main(int argc,char **argv){
             }
         }
         else{
+            s=0;
             ROS_INFO_STREAM(afk);
             for(const auto& bodyArray : bodyArrayNew){
                 if(bodyArray.bodies[s].isTracked){
