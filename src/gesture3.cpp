@@ -170,7 +170,7 @@ int main(int argc,char **argv){
     // Run the ROS node
     ROS_INFO_NAMED("personGesture", "personGesture: Running ROS node...");
     
-    bool alive = true;
+    bool alive = false;
     int state = 0;
     int afk = 0;
     int count_stop = 0;
