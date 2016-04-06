@@ -12,7 +12,7 @@ bool gestureLiftRightFoot(const k2_client::Body& body){
     }
 }
 
-bool gesturFlexnes(const k2_client::Body& body){
+bool gestureFlexnes(const k2_client::Body& body){
     const auto& elbowRight = body.jointPositions[9];
     const auto& elbowLeft = body.jointPositions[5];
     const auto& shoulderRight = body.jointPositions[8];
