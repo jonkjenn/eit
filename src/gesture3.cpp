@@ -212,13 +212,13 @@ int main(int argc,char **argv){
             }
         }
         else{
+            for(const auto& bodyArray : bodyArrayNew){
             for(int i = 0; i <= 6; i++){
                 if(bodyArray.bodies[i].isTracked){
                         s = i;
                         break;
                 }
             }
-            for(const auto& bodyArray : bodyArrayNew){
                 if(bodyArray.bodies[s].isTracked){
                     afk=0;
                     ROS_INFO_STREAM(afk);
