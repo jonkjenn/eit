@@ -213,15 +213,16 @@ int main(int argc,char **argv){
         }
         else{
             s=0;
-            ROS_INFO_STREAM(afk);
             for(const auto& bodyArray : bodyArrayNew){
                 if(bodyArray.bodies[s].isTracked){
+                    ROS_INFO_STREAM("Fant en");
                     afk=0;
                     if(gestureStop(bodyArray.bodies[s])){
                         count_stop++;
                     }
                 }
                 else{
+                    ROS_INFO_STREAM(afk);
                     afk++;
                 }
                 bodyArrayHistory.push_front(bodyArray);
