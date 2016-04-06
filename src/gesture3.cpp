@@ -249,8 +249,8 @@ int main(int argc,char **argv){
                 }
             }
             bodyArrayNew.clear();
+            ROS_INFO_STREAM(bodyArrayHistory.size());
         }
-        ROS_INFO_STREAM(bodyArrayHistory.size());
         
         if (bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize){
             ROS_INFO("Fail?");
