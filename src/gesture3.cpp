@@ -212,6 +212,7 @@ int main(int argc,char **argv){
             }
         }
         else{
+            ROS_INFO_STREAM(afk);
             for(const auto& bodyArray : bodyArrayNew){
                 if(bodyArray.bodies[s].isTracked){
                     afk=0;
@@ -230,7 +231,6 @@ int main(int argc,char **argv){
                     }
                     bodyArrayHistory.pop_back();
                 }
-                ROS_INFO_STREAM(afk);
                 if (count_stop >= 30 || afk > 90) {
                     state = 0;
                     alive = false;
