@@ -30,6 +30,8 @@ bool prevAboveLength = false;
 bool laser_stopped = false;
 bool bumper_stopped = false;
 
+int l_rate = 10;
+
 //int count = 0;
 int underLenCount = 0;
 
@@ -59,9 +61,9 @@ bool gestureTestMidle(const k2_client::Body& body){
 
 void laser_sub_cb(const sensor_msgs::LaserScan msg){
 	for(float d:msg.ranges){
-		if(d<0.2){
+		if(d>0.1 && d<0.2){
 			//ROS_INFO_STREAM("Laser: " << d);
-			laser_stopped = true;
+			//laser_stopped = true;
 			return;
 		}	
 	}
@@ -99,7 +101,7 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
 		vel_msg.angular.y = 0;
 		vel_msg.angular.z = 0;
 
-		ROS_INFO("STOPPING");
+		//ROS_INFO("STOPPING");
 		personPos_pub.publish(vel_msg);
 		return;
 	}
@@ -162,11 +164,11 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
 			//personPos_pub.publish(vel_msg);
 		}
 	}
-	if(checkCount > 0 && checkCount < 2*loop_rate){
+	if(checkCount > 0 && checkCount < 2*l_rate){
     		checkCount++;
     		vel_msg = prev_vel_msg;
 	}
-  	else if(checkCount >= 2*loop_rate){
+  	else if(checkCount >= 2*l_rate){
     	checkCount = 0;
   	}
 	
@@ -201,7 +203,7 @@ int main(int argc,char **argv){
 	ros::Subscriber laser_sub = n.subscribe("RosAria/S3Series_1_laserscan", 1, laser_sub_cb); 
 	ros::Subscriber bumper_sub = n.subscribe("RosAria/bumper_state", 1, bumper_state_sub_cb);
 
-	ros::Rate loop_rate(6); //0.1
+	ros::Rate loop_rate(l_rate); //0.1
 
 	ROS_INFO_NAMED("personFollower", "personFollower: Running ROS node...");
 	while (ros::ok()){
