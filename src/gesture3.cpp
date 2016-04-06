@@ -238,7 +238,7 @@ int main(int argc,char **argv){
                 }
                 if (count_stop >= 30 || afk > 90) {
                     state = 0;
-                    alive = True;
+                    alive = true;
                     count_stop = 0;
                     afk=0;
                     bodyArrayHistory.clear();
