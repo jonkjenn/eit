@@ -24,7 +24,7 @@ bool gesturFlexnes(cinst k2_client::Body& body){
     const auto& wristLeft  = body.jointPositions[6];
     
     
-    if( (elbowRight.position.y == shoulderRight.position.y) && (wristRight.position.x == elbowRight.position.x) && (elbowLeft.position.y == shoulderLeft.position.y) && (wristLeft.position.x == elbowLeft.position.x)) {
+    if( (abs(elbowRight.position.y - shoulderRight.position.y)<0.1) && (wristRight.position.x == elbowRight.position.x) && (elbowLeft.position.y == shoulderLeft.position.y) && (wristLeft.position.x == elbowLeft.position.x)) {
         return true;
     }
     else{
