@@ -80,12 +80,14 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
                     }
                     lastTime_wave1[bodyNumber]=time_wave[bodyNumber];
                     count_wave[bodyNumber]++;
+                    ROS_INFO("Fant 1");
                 }
                 else if(start_wave[bodyNumber] == 0){
                     if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
                         start_wave[bodyNumber] = 1;
                         lastTime_wave2[bodyNumber]=time_wave[bodyNumber];
                         count_wave[bodyNumber]++;
+                        ROS_INFO("Fant 1");
                     }
                 }
                 else{
@@ -93,6 +95,7 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
                         start_wave[bodyNumber] = 0;
                         lastTime_wave2[bodyNumber]=time_wave[bodyNumber];
                         count_wave[bodyNumber] ++;
+                        ROS_INFO("Fant 1");
                     }
                 }
             }
