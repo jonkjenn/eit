@@ -168,7 +168,7 @@ int main(int argc,char **argv){
     // Subsribe to topic "bodyArray" published by k2_klient package node startBody.cpp
     ros::Subscriber gesture_sub = n.subscribe("head/kinect2/bodyArray", 1000, gesture_sub_cb);
     
-    ros::Rate loop_rate(5); //0.1
+    ros::Rate loop_rate(3); //0.1
     
     // Run the ROS node
     ROS_INFO_NAMED("personGesture", "personGesture: Running ROS node...");
