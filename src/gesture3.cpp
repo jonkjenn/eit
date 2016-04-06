@@ -135,6 +135,7 @@ bool gestureStop(const k2_client::Body& body){
 
 namespace Constants {
     int bodyArrayHistoryMaxSize = 60;
+    int bodyArrayNewMaxSize = 10;
 }
 
 std::deque<k2_client::BodyArray> bodyArrayHistory;
@@ -147,6 +148,9 @@ void gesture_sub_cb(const k2_client::BodyArray msg){
     ROS_INFO_NAMED("personGesture", "personGesture: Received bodyArray");
     
     bodyArrayNew.push_back(msg);
+    if (bodyArrayNew.size() >= Constants::bodyArrayNewMaxSize){
+        bodyArrayNew.pop_back();
+    }
     
 }
 
