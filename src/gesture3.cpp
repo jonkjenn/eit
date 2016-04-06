@@ -233,7 +233,7 @@ int main(int argc,char **argv){
                 ROS_INFO_STREAM(afk);
                 if (count_stop >= 30 || afk > 90) {
                     state = 0;
-                    alive = true;
+                    alive = false;
                     count_stop = 0;
                     bodyArrayHistory.clear();
                     ROS_INFO("Follow stopped");
