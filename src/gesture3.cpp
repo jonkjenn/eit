@@ -116,9 +116,11 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
             time_wave[bodyNumber] = 0;
             start_wave[bodyNumber]=2;
         }
-        count_wave[bodyNumber] --;
+        if (count_wave[bodyNumber] > 0) {
+            count_wave[bodyNumber] --;
+        }
     }
-        
+    
 }
 
 
@@ -173,7 +175,7 @@ int main(int argc,char **argv){
     // Run the ROS node
     ROS_INFO_NAMED("personGesture", "personGesture: Running ROS node...");
     
-    bool alive = true;
+    bool alive = false;
     int state = 0;
     int afk = 0;
     int count_stop = 0;
@@ -218,6 +220,7 @@ int main(int argc,char **argv){
         
         
         else{
+            ROS_INFO("Leter etter stop gesture");
             for(const auto& bodyArray : bodyArrayNew){
                 if(bodyArray.bodies[s].isTracked){
                     afk=0;
@@ -230,11 +233,13 @@ int main(int argc,char **argv){
                 }
                 bodyArrayHistory.push_front(bodyArray);
                 const auto& historyBack = bodyArrayHistory.back();
-                if(bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize && gestureStop(historyBack.bodies[s])){
-                    count_stop--;
+                if(bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize && count_stop < 30){
+                    if(gestureStop(historyBack.bodies[s]) && count_stop > 0){
+                        count_stop--;
+                    }
                     bodyArrayHistory.pop_back();
                 }
-                if (count_stop > 30 || afk > 90) {
+                if (count_stop >= 30 || afk > 90) {
                     state = 0;
                     alive = true;
                     count_stop = 0;
