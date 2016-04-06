@@ -238,7 +238,9 @@ int main(int argc,char **argv){
                         count_stop--;
                         ROS_INFO("Nope");
                     }
+                    ROS_INFO("Fail?");
                     bodyArrayHistory.pop_back();
+                    ROS_INFO("Nope");
                 }
                 if (count_stop >= 30 || afk > 90) {
                     state = 0;
