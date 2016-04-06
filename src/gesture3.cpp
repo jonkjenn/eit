@@ -153,7 +153,9 @@ void gesture_sub_cb(const k2_client::BodyArray msg){
     
     bodyArrayNew.push_back(msg);
     if (bodyArrayNew.size() >= Constants::bodyArrayNewMaxSize){
+        ROS_INFO("Fail?");
         bodyArrayNew.pop_back();
+        ROS_INFO("Nope");
     }
     
 }
