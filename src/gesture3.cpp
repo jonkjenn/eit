@@ -214,6 +214,7 @@ int main(int argc,char **argv){
         else{
             s=0;
             for(const auto& bodyArray : bodyArrayNew){
+                ROS_INFO_STREAM(afk);
                 if(bodyArray.bodies[s].isTracked){
                     ROS_INFO_STREAM("Fant en");
                     afk=0;
