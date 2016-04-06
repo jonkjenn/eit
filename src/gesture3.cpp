@@ -126,7 +126,8 @@ bool gestureStop(const k2_client::Body& body){
     const auto& shoulderRight = body.jointPositions[8];
     const auto& handRight = body.jointPositions[11];
     
-    if(handRight.position.z > (shoulderRight.position.z-0.2) && body.handRightState==2){
+    if(handRight.position.z < (shoulderRight.position.z-0.2) && body.handRightState==2){
+        ROS_INFO("Leter etter stop gesture");
         return true;
     }
     else{
@@ -211,7 +212,6 @@ int main(int argc,char **argv){
             }
         }
         else{
-            ROS_INFO("Leter etter stop gesture");
             for(const auto& bodyArray : bodyArrayNew){
                 if(bodyArray.bodies[s].isTracked){
                     afk=0;
