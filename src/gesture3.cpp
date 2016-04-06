@@ -101,7 +101,7 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
             }
         }
     }
-if(count_wave[bodyNumber]==0){
+    if(count_wave[bodyNumber]==0){
         time_wave[bodyNumber] = 0;
     }
     if(time_wave[bodyNumber] > 60 && count_wave[bodyNumber] < 3){
@@ -213,12 +213,12 @@ int main(int argc,char **argv){
         }
         else{
             for(const auto& bodyArray : bodyArrayNew){
-            for(int i = 0; i <= 6; i++){
-                if(bodyArray.bodies[i].isTracked){
+                for(int i = 0; i <= 6; i++){
+                    if(bodyArray.bodies[i].isTracked){
                         s = i;
                         break;
+                    }
                 }
-            }
                 if(bodyArray.bodies[s].isTracked){
                     afk=0;
                     if(gestureStop(bodyArray.bodies[s])){
@@ -232,7 +232,9 @@ int main(int argc,char **argv){
                 const auto& historyBack = bodyArrayHistory.back();
                 if(bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize && count_stop < 30){
                     if(gestureStop(historyBack.bodies[s]) && count_stop > 0){
+                        ROS_INFO("Fail?");
                         count_stop--;
+                        ROS_INFO("Nope");
                     }
                     bodyArrayHistory.pop_back();
                 }
@@ -248,6 +250,8 @@ int main(int argc,char **argv){
             }
             bodyArrayNew.clear();
         }
+        ROS_INFO_STREAM(bodyArrayHistory.size());
+        
         if (bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize){
             ROS_INFO("Fail?");
             bodyArrayHistory.pop_back();
