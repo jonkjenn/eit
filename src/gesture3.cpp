@@ -149,7 +149,7 @@ std::deque<k2_client::BodyArray> bodyArrayNew;
 
 // Subscriber callback function for recieving BodyArray msg from k2_client
 void gesture_sub_cb(const k2_client::BodyArray msg){
-    ROS_INFO_NAMED("personGesture", "personGesture: Received bodyArray");
+    //ROS_INFO_NAMED("personGesture", "personGesture: Received bodyArray");
     
     bodyArrayNew.push_back(msg);
     if (bodyArrayNew.size() >= Constants::bodyArrayNewMaxSize){
@@ -216,6 +216,7 @@ int main(int argc,char **argv){
             for(const auto& bodyArray : bodyArrayNew){
                 if(bodyArray.bodies[s].isTracked){
                     afk=0;
+                    ROS_INFO_STREAM(afk);
                     if(gestureStop(bodyArray.bodies[s])){
                         count_stop++;
                     }
