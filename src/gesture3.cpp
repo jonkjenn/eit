@@ -98,7 +98,7 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
             }
         }
     }
-    if(count_wave[[bodyNumber]]==0){
+    if(count_wave[bodyNumber]==0){
         time_wave[bodyNumber] = 0;
     }
     if(time_wave[bodyNumber] > 60 && count_wave[bodyNumber] < 3){
