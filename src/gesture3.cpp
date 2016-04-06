@@ -151,17 +151,9 @@ void gesture_sub_cb(const k2_client::BodyArray msg){
 }
 
 
-
-
-
-
-
-
-
 int main(int argc,char **argv){
     ros::init(argc,argv,"personGesture");
     ros::NodeHandle n;
-    
     
     // Subsribe to topic "bodyArray" published by k2_klient package node startBody.cpp
     ros::Subscriber gesture_sub = n.subscribe("kinect2/bodyArray", 1000, gesture_sub_cb);
@@ -210,11 +202,7 @@ int main(int argc,char **argv){
             if (!alive) {
                 bodyArrayHistory.clear();
             }
-            
         }
-        
-        
-        
         else{
             ROS_INFO("Leter etter stop gesture");
             for(const auto& bodyArray : bodyArrayNew){
