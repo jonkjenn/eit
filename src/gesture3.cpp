@@ -212,7 +212,12 @@ int main(int argc,char **argv){
             }
         }
         else{
-            s=0;
+            for(int i = 0; i <= 6; i++){
+                if(bodyArray.bodies[i].isTracked){
+                        s = i;
+                        break;
+                }
+            }
             for(const auto& bodyArray : bodyArrayNew){
                 if(bodyArray.bodies[s].isTracked){
                     afk=0;
@@ -237,6 +242,7 @@ int main(int argc,char **argv){
                     state = 0;
                     alive = false;
                     count_stop = 0;
+                    afk=0;
                     bodyArrayHistory.clear();
                     ROS_INFO("Follow stopped");
                     break;
