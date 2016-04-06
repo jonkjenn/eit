@@ -98,18 +98,14 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
             }
         }
     }
+if(count_wave[bodyNumber]==0){
+        time_wave[bodyNumber] = 0;
+    }
     if(time_wave[bodyNumber] > 60 && count_wave[bodyNumber] < 3){
         if (count_wave[bodyNumber] == 2) {
-            if (lastTime_wave1[bodyNumber]>1) {
-                lastTime_wave2[bodyNumber] -=(lastTime_wave1[bodyNumber]-1);
-                time_wave[bodyNumber] -=(lastTime_wave1[bodyNumber]-1);
-                lastTime_wave1[bodyNumber] = 1;
-            }
-            else{
-                time_wave[bodyNumber] -=lastTime_wave2[bodyNumber];
-                lastTime_wave2[bodyNumber] = 0;
-                lastTime_wave1[bodyNumber] = 1;
-            }
+            time_wave[bodyNumber] -=(lastTime_wave2[bodyNumber]-1);
+            lastTime_wave2[bodyNumber] = 0;
+            lastTime_wave1[bodyNumber] = 1;
         }
         else {
             lastTime_wave1[bodyNumber] = 0;
@@ -120,7 +116,6 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
             count_wave[bodyNumber] --;
         }
     }
-    
 }
 
 
@@ -137,8 +132,10 @@ bool gestureStop(const k2_client::Body& body){
 }
 
 
+
 namespace Constants {
     int bodyArrayHistoryMaxSize = 60;
+    int bodyArrayNewMaxSize = 10;
 }
 
 std::deque<k2_client::BodyArray> bodyArrayHistory;
@@ -151,21 +148,16 @@ void gesture_sub_cb(const k2_client::BodyArray msg){
     ROS_INFO_NAMED("personGesture", "personGesture: Received bodyArray");
     
     bodyArrayNew.push_back(msg);
+    if (bodyArrayNew.size() >= Constants::bodyArrayNewMaxSize){
+        bodyArrayNew.pop_back();
+    }
     
 }
-
-
-
-
-
-
-
 
 
 int main(int argc,char **argv){
     ros::init(argc,argv,"personGesture");
     ros::NodeHandle n;
-    
     
     // Subsribe to topic "bodyArray" published by k2_klient package node startBody.cpp
     ros::Subscriber gesture_sub = n.subscribe("kinect2/bodyArray", 1000, gesture_sub_cb);
@@ -175,7 +167,7 @@ int main(int argc,char **argv){
     // Run the ROS node
     ROS_INFO_NAMED("personGesture", "personGesture: Running ROS node...");
     
-    bool alive = false;
+    bool alive = true;
     int state = 0;
     int afk = 0;
     int count_stop = 0;
@@ -214,11 +206,7 @@ int main(int argc,char **argv){
             if (!alive) {
                 bodyArrayHistory.clear();
             }
-            
         }
-        
-        
-        
         else{
             ROS_INFO("Leter etter stop gesture");
             for(const auto& bodyArray : bodyArrayNew){
