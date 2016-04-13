@@ -7,14 +7,14 @@
 #include <tf/transform_listener.h>
 #include <deque>
 
-
+int count[6] = {0,0,0,0,0,0};
 int start_wave[6] = {2,2,2,2,2,2};
-int count_wave[6] = {0,0,0,0,0,0};
 int lastTime_wave1[6] = {0,0,0,0,0,0};
 int lastTime_wave2[6] = {0,0,0,0,0,0};
-int time_wave[6] = {0,0,0,0,0,0};
+int time[6] = {0,0,0,0,0,0};
 
-int s=-1;
+
+
 
 bool gestureTestMidle(double y1, double x1, double y2, double x2){
     if(abs(x1 - x2) <= 0.05*sqrt(pow((y1-y2),2) + pow((x1-x2),2))){
@@ -46,88 +46,118 @@ bool gestureTestAbove(double y1, double x1, double y2, double x2){
 
 
 
-
-
 void gestureWave(const k2_client::Body& body, int bodyNumber){
     
     const auto& elbowRight = body.jointPositions[9];
     const auto& handRight = body.jointPositions[11];
     
-    time_wave[bodyNumber] ++;
-    if (time_wave[bodyNumber]==1) {
-        if(s != -1 && gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
-            ROS_INFO("Startet");
-            if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
-                start_wave[bodyNumber] = 1;
-            }
-            else{
-                start_wave[bodyNumber] = 0;
-            }
-            lastTime_wave1[bodyNumber]=time_wave[bodyNumber];
-            count_wave[bodyNumber]++;
-        }
-    }
-    else{
-        if(s != -1 && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
-            if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false){
-                if(start_wave[bodyNumber] == 2){
-                    ROS_INFO("Startet");
-                    if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
-                        start_wave[bodyNumber] = 1;
-                    }
-                    else{
-                        start_wave[bodyNumber] = 0;
-                    }
-                    lastTime_wave1[bodyNumber]=time_wave[bodyNumber];
-                    count_wave[bodyNumber]++;
-                    ROS_INFO("Fant 1");
-                }
-                else if(start_wave[bodyNumber] == 0){
-                    if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
-                        start_wave[bodyNumber] = 1;
-                        lastTime_wave2[bodyNumber]=time_wave[bodyNumber];
-                        count_wave[bodyNumber]++;
-                        ROS_INFO("Fant 1");
-                    }
+    time[bodyNumber] ++;
+    
+    if(body.isTracked){
+        if (time[bodyNumber]==1) {
+            if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
+                if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
+                    start_wave[bodyNumber] = 1;
                 }
                 else{
-                    if(gestureTestRight(elbowRight.position.y, elbowRight.position.x, handRight.position.y, handRight.position.x)){
-                        start_wave[bodyNumber] = 0;
-                        lastTime_wave2[bodyNumber]=time_wave[bodyNumber];
-                        count_wave[bodyNumber] ++;
+                    start_wave[bodyNumber] = 0;
+                }
+                lastTime_wave1[bodyNumber]=time[bodyNumber];
+                count[bodyNumber]++;
+                ROS_INFO("Fant 1");
+            }
+        }
+        else{
+            if(gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
+                if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false){
+                    if(start_wave[bodyNumber] == 2){
+                        if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
+                            start_wave[bodyNumber] = 1;
+                        }
+                        else{
+                            start_wave[bodyNumber] = 0;
+                        }
+                        lastTime_wave1[bodyNumber]=time[bodyNumber];
+                        count[bodyNumber]++;
                         ROS_INFO("Fant 1");
+                    }
+                    else if(start_wave[bodyNumber] == 0){
+                        if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
+                            start_wave[bodyNumber] = 1;
+                            lastTime_wave2[bodyNumber]=time[bodyNumber];
+                            count[bodyNumber]++;
+                            ROS_INFO("Fant 1");
+                        }
+                    }
+                    else{
+                        if(gestureTestRight(elbowRight.position.y, elbowRight.position.x, handRight.position.y, handRight.position.x)){
+                            start_wave[bodyNumber] = 0;
+                            lastTime_wave2[bodyNumber]=time[bodyNumber];
+                            count[bodyNumber] ++;
+                            ROS_INFO("Fant 1");
+                        }
                     }
                 }
             }
         }
     }
-    if(count_wave[bodyNumber]==0){
-        time_wave[bodyNumber] = 0;
+    if(count[bodyNumber]==0){
+        time[bodyNumber] = 0;
     }
-    if(time_wave[bodyNumber] > 60 && count_wave[bodyNumber] < 3){
-        if (count_wave[bodyNumber] == 2) {
-            time_wave[bodyNumber] -=(lastTime_wave2[bodyNumber]-1);
+    else if(time_wave[bodyNumber] > 60 && count[bodyNumber] < 3){
+        if (count[bodyNumber] == 2) {
+            time[bodyNumber] -=(lastTime_wave2[bodyNumber]-1);
             lastTime_wave2[bodyNumber] = 0;
             lastTime_wave1[bodyNumber] = 1;
         }
         else {
             lastTime_wave1[bodyNumber] = 0;
-            time_wave[bodyNumber] = 0;
+            time[bodyNumber] = 0;
             start_wave[bodyNumber]=2;
         }
-        if (count_wave[bodyNumber] > 0) {
-            count_wave[bodyNumber] --;
-        }
+        count[bodyNumber] --;
     }
 }
+
+
+
+
+
+bool gesture_start(){
+    bool ret = false;
+    for(const auto& bodyArray : bodyArrayNew){
+        for(int i = 0; i <= 6; i++){
+            gestureWave(bodyArray.bodies[i],i);
+            if (count[i] >2) {
+                ret = true;
+                ROS_INFO("Wave funnet");
+                for (int j=0; j <= 6; j++) {
+                    start_wave[j] = 2;
+                    count[j] = 0;
+                    lastTime_wave1[j]=0;
+                    lastTime_wave2[j]=0;
+                    time[j] = 0;
+                }
+                break;
+            }
+        }
+        if (ret) {
+            bodyArrayHistory.clear();
+            break;
+        }
+    }
+    bodyArrayNew.clear();
+    return ret;
+}
+
+
 
 
 bool gestureStop(const k2_client::Body& body){
     const auto& shoulderRight = body.jointPositions[8];
     const auto& handRight = body.jointPositions[11];
     
-    if(handRight.position.z < (shoulderRight.position.z-0.2) && body.handRightState==2){
-        ROS_INFO("Leter etter stop gesture");
+    if(handRight.position.z > (shoulderRight.position.z-0.2) && body.handRightState==2){
         return true;
     }
     else{
@@ -136,13 +166,29 @@ bool gestureStop(const k2_client::Body& body){
 }
 
 
+bool gestures(const k2_client::Body& body, int b){
+    switch(b){
+        case 1:
+            return gestureStop(body);
+            break;
+    }
+    
+}
+
+
 
 namespace Constants {
-    int bodyArrayHistoryMaxSize = 60;
+    int bodyArrayHistoryMaxSize = 90;
     int bodyArrayNewMaxSize = 10;
 }
 
-std::deque<k2_client::BodyArray> bodyArrayHistory;
+//std::deque<k2_client::BodyArray> bodyArrayHistory;
+
+struct boolArray{
+    bool data[6] = {false,false,false,false,false,false};
+};
+
+std::deque<boolArray> bodyArrayHistory;
 
 std::deque<k2_client::BodyArray> bodyArrayNew;
 
@@ -153,9 +199,66 @@ void gesture_sub_cb(const k2_client::BodyArray msg){
     
     bodyArrayNew.push_back(msg);
     if (bodyArrayNew.size() >= Constants::bodyArrayNewMaxSize){
-        ROS_INFO("Fail?");
-        bodyArrayNew.pop_front();
-        ROS_INFO("Nope");
+        bodyArrayNew.pop_back();
+    }
+    
+}
+
+
+int gestureCall(int b){
+    int afk_count;
+    bool success = false;
+    for(const auto& bodyArray : bodyArrayNew){
+        boolArray temp;
+        for(int i = 0; i <= 6; i++){
+            if(bodyArray.bodies[i].isTracked){
+                afk[i]=0;
+                if(gestures(bodyArray.bodies[i])){
+                    count[i]++;
+                    temp.data[i]=true;
+                }
+            }
+            else{
+                time[i]++;
+            }
+        }
+        bodyArrayHistory.push_front(temp);
+        
+        const auto& historyBack = bodyArrayHistory.back();
+        if(bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize){
+            for(int i = 0; i <= 6; i++){
+                if(count[i] > 0 && count[i] < 30 && historyBack[i]){
+                    count[i]--;
+                }
+            }
+            bodyArrayHistory.pop_back();
+        }
+        afk_count = 0;
+        for(int i = 0; i <= 6; i++){
+            if (time[i] > 120) {
+                afk_count++;
+            }
+            if (count[i] >= 30){
+                success =true;
+                break;
+            }
+        }
+        if (success || afk_count >= 6){
+            bodyArrayHistory.clear();
+            break;
+        }
+    }
+    bodyArrayNew.clear();
+    if (success){
+        ROS_INFO("Success");
+        return 1;
+    }
+    else if(afk_count >= 6){
+        ROS_INFO("Afk");
+        return 0;
+    }
+    else{
+        return 2;
     }
     
 }
@@ -166,101 +269,29 @@ int main(int argc,char **argv){
     ros::NodeHandle n;
     
     // Subsribe to topic "bodyArray" published by k2_klient package node startBody.cpp
-    ros::Subscriber gesture_sub = n.subscribe("head/kinect2/bodyArray", 1000, gesture_sub_cb);
+    ros::Subscriber gesture_sub = n.subscribe("kinect2/bodyArray", 1000, gesture_sub_cb);
     
     ros::Rate loop_rate(3); //0.1
     
     // Run the ROS node
     ROS_INFO_NAMED("personGesture", "personGesture: Running ROS node...");
     
-    bool alive = false;
-    int state = 0;
-    int afk = 0;
-    int count_stop = 0;
+    bool state = false;
     
     while (ros::ok()){
         ros::spinOnce();
         loop_rate.sleep();
-        if(alive){
-            for(const auto& bodyArray : bodyArrayNew){
-                for(int i = 0; i <= 6; i++){
-                    s = -1;
-                    if(bodyArray.bodies[i].isTracked){
-                        s = i;
-                    }
-                    gestureWave(bodyArray.bodies[i],i);
-                    if (count_wave[i] >2) {
-                        state = 1;
-                        alive = false;
-                        ROS_INFO("Wave funnet");
-                        for (int j=0; j <= 6; j++) {
-                            start_wave[j] = 2;
-                            count_wave[j] = 0;
-                            lastTime_wave1[j]=0;
-                            lastTime_wave2[j]=0;
-                            time_wave[j] = 0;
-                        }
-                        break;
-                    }
-                }
-                if (!alive) {
-                    break;
-                }
-                bodyArrayHistory.push_front(bodyArray);
-            }
-            bodyArrayNew.clear();
-            if (!alive) {
-                bodyArrayHistory.clear();
+        if (state) {
+            int b = 1;
+            if(gestureCall(b)!= 2){
+                state = false;
             }
         }
         else{
-            for(const auto& bodyArray : bodyArrayNew){
-                s = -1;
-                for(int i = 0; i <= 6; i++){
-                    if(bodyArray.bodies[i].isTracked){
-                        s = i;
-                        break;
-                    }
-                }
-                if(s != -1 && bodyArray.bodies[s].isTracked){
-                    afk=0;
-                    if(gestureStop(bodyArray.bodies[s])){
-                        count_stop++;
-                    }
-                }
-                else{
-                    afk++;
-                }
-                bodyArrayHistory.push_front(bodyArray);
-                const auto& historyBack = bodyArrayHistory.back();
-                if(bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize && count_stop < 30 && s != -1){
-                    if(gestureStop(historyBack.bodies[s]) && count_stop > 0){
-                        count_stop--;
-                    }
-                    ROS_INFO("Fail?");
-                    bodyArrayHistory.pop_back();
-                    ROS_INFO("Nope");
-                }
-                if (count_stop >= 30 || afk > 90) {
-                    state = 0;
-                    alive = true;
-                    count_stop = 0;
-                    afk=0;
-                    bodyArrayHistory.clear();
-                    ROS_INFO("Follow stopped");
-                    break;
-                }
-            }
-            bodyArrayNew.clear();
-            ROS_INFO_STREAM(bodyArrayHistory.size());
-        }
-        
-        if (bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize){
-            ROS_INFO("Fail?");
-            bodyArrayHistory.pop_back();
-            ROS_INFO("Nope");
+            state = gesture_start();
         }
     }
     ROS_INFO_NAMED("personGesture",  "personGesture: Quitting... \n" );
     return 0;
 }
+
