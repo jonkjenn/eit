@@ -279,7 +279,7 @@ int main(int argc,char **argv){
     // Run the ROS node
     ROS_INFO_NAMED("personGesture", "personGesture: Running ROS node...");
     
-    bool state = false;
+    bool state = true;
     
     while (ros::ok()){
         ros::spinOnce();
