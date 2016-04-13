@@ -238,11 +238,11 @@ bool gestureXrossLegs(const k2_client::Body& body){
 }
 
 bool gestureHandsStraightUp(const k2_client::Body& body){
-    const auto& elbowLeft = body.jointPosition[5]; 
-    const auto& elbowRight = body.jointPosition[9];
-    const auto& head = body.jointPosition[3];
-    const auto& shoulderRight = body.jointPosition[8];
-    const auto& shoulderLeft = body.jointPosition[4];
+    const auto& elbowLeft = body.jointPositions[5]; 
+    const auto& elbowRight = body.jointPositions[9];
+    const auto& head = body.jointPositions[3];
+    const auto& shoulderRight = body.jointPositions[8];
+    const auto& shoulderLeft = body.jointPositions[4];
 
     if(  elbowRight.position.y > head.position.y && elbowLeft.position.y > head.position.y && abs(shoulderRight.position.x - elbowRight.position.x)<0.1 && abs(shoulderLeft.position.x - elbowLeft.position.x)<0.1                         ){
         return true;
@@ -255,19 +255,18 @@ bool gestureHandsStraightUp(const k2_client::Body& body){
 
 
 bool gestureStandOnToes(const k2_client::Body& body){
-    const auto& footRight = body.jointPosition[19];
-    const auto& footLeft = body.jointPosition[15];
-    const auto& ankleRight = body.jointPosition[18];
-    const auto& ankleLeft = body.jointPosition[14];
+    const auto& footRight = body.jointPositions[19];
+    const auto& footLeft = body.jointPositions[15];
+    const auto& ankleRight = body.jointPositions[18];
+    const auto& ankleLeft = body.jointPositions[14];
 
 
     if ( (ankleRight.jointPosition.y - footRight.jointPosition.y)>0.05 && (ankleLeft.jointPosition.y - footLeft.jointPosition.y)>0.05){
         return true;
     }
-
-    else{
+   else{
         return false; 
-    }
+   }
 }
 
 
