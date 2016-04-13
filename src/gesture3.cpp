@@ -14,7 +14,7 @@ int lastTime_wave2[6] = {0,0,0,0,0,0};
 int time_count[6] = {0,0,0,0,0,0};
 
 namespace Constants {
-   unsigned int bodyArrayHistoryMaxSize = 60;
+   unsigned int bodyArrayHistoryMaxSize = 45;
    unsigned int bodyArrayNewMaxSize = 10;
 }
 
