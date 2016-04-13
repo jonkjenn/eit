@@ -14,7 +14,7 @@ int lastTime_wave2[6] = {0,0,0,0,0,0};
 int time_count[6] = {0,0,0,0,0,0};
 
 namespace Constants {
-   unsigned int bodyArrayHistoryMaxSize = 60;
+   unsigned int bodyArrayHistoryMaxSize = 45;
    unsigned int bodyArrayNewMaxSize = 10;
 }
 
@@ -281,6 +281,9 @@ bool gestures(const k2_client::Body& body, int b){
          case 3:
             return gestureStandOnToes(body);
             break;
+         case 4:
+            return gestureFlexnes(body);
+            break;
         default :
             return false;
     }
@@ -377,7 +380,7 @@ int main(int argc,char **argv){
         ros::spinOnce();
         loop_rate.sleep();
         if (state) {
-            int b = 3;
+            int b = 4;
             if(gestureCall(b)!= 2){
                 state = false;
             }
