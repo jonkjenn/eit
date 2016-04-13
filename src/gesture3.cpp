@@ -196,7 +196,7 @@ bool gestureLiftRightFoot(const k2_client::Body& body){
     const auto& kneeLeft = body.jointPositions[13];
     
     //Sjekker om høyre kne er høyere enn venstre kne
-    if(kneeRight.position.y > ((kneeLeft.position.y)+0.05) ){
+    if(kneeRight.position.y > ((kneeLeft.position.y)+0.1) ){
         return true;
     }
     else{
@@ -277,6 +277,9 @@ bool gestures(const k2_client::Body& body, int b){
             break;
          case 2:
             return gestureLiftRightFoot(body);
+            break;
+         case 3:
+            return gestureStandOnToes(body);
             break;
         default :
             return false;
@@ -374,7 +377,7 @@ int main(int argc,char **argv){
         ros::spinOnce();
         loop_rate.sleep();
         if (state) {
-            int b = 2;
+            int b = 3;
             if(gestureCall(b)!= 2){
                 state = false;
             }
