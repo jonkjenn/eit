@@ -251,6 +251,10 @@ int gestureCall(int b){
         }
         if (success || afk_count >= 6){
             bodyArrayHistory.clear();
+            for (int j=0; j < 6; j++) {
+                count[j] = 0;
+                time_count[j] = 0;
+            }
             break;
         }
     }
