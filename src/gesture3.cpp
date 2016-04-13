@@ -238,7 +238,7 @@ int gestureCall(int b){
         }
         afk_count = 0;
         for(int i = 0; i < 6; i++){
-            ROS_INFO_STREAM(time_count[i]);
+            ROS_INFO_STREAM(count[i]);
             if (time_count[i] > 120) {
                 afk_count++;
             }
