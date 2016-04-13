@@ -272,7 +272,7 @@ int main(int argc,char **argv){
     ros::NodeHandle n;
     
     // Subsribe to topic "bodyArray" published by k2_klient package node startBody.cpp
-    ros::Subscriber gesture_sub = n.subscribe("kinect2/bodyArray", 1000, gesture_sub_cb);
+    ros::Subscriber gesture_sub = n.subscribe("head/kinect2/bodyArray", 1000, gesture_sub_cb);
     
     ros::Rate loop_rate(3); //0.1
     
