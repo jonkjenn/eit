@@ -35,9 +35,23 @@ bool gestureStop(const k2_client::Body:: body){
     const audo& shoulderRight = body.jointPositions[8];
     
     if(abs(handRight.position.y - shoulderRight.position.y )<0.1  &&  (handRight.position.z < shoulderRight.position.z)){
-        return true
+        return true;
     }
     else {
-        return false
+        return false;
+    }
+}
+
+
+bool gestureXrossLegs(const k2_client::Body:: body){
+    const auto& ankleRight = body.jointPositions[18];
+    const auto& ankleLeft = body.jointPositions[14];
+
+    if(ankleRight.position.x > ankleLeft.positionx or ankleLeft.position.x < ankleRight.position.x){
+        return true;
+
+    }
+    else {
+        return false;
     }
 }
