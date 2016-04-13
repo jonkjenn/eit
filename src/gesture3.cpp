@@ -193,6 +193,7 @@ bool gestureStop(const k2_client::Body& body){
 bool gestures(const k2_client::Body& body, int b){
     switch(b){
         case 1:
+            ROS_INFO("Hand");
             return gestureStop(body);
             break;
         default :
@@ -238,7 +239,6 @@ int gestureCall(int b){
         }
         afk_count = 0;
         for(int i = 0; i < 6; i++){
-            ROS_INFO_STREAM(count[i]);
             if (time_count[i] > 120) {
                 afk_count++;
             }
