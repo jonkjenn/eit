@@ -11,10 +11,35 @@ int count[6] = {0,0,0,0,0,0};
 int start_wave[6] = {2,2,2,2,2,2};
 int lastTime_wave1[6] = {0,0,0,0,0,0};
 int lastTime_wave2[6] = {0,0,0,0,0,0};
-int time[6] = {0,0,0,0,0,0};
+int time_count[6] = {0,0,0,0,0,0};
 
 
+namespace Constants {
+    int bodyArrayHistoryMaxSize = 90;
+    int bodyArrayNewMaxSize = 10;
+}
 
+//std::deque<k2_client::BodyArray> bodyArrayHistory;
+
+struct boolArray{
+    bool data[6] = {false,false,false,false,false,false};
+};
+
+std::deque<boolArray> bodyArrayHistory;
+
+std::deque<k2_client::BodyArray> bodyArrayNew;
+
+
+// Subscriber callback function for recieving BodyArray msg from k2_client
+void gesture_sub_cb(const k2_client::BodyArray msg){
+    //ROS_INFO_NAMED("personGesture", "personGesture: Received bodyArray");
+    
+    bodyArrayNew.push_back(msg);
+    if (bodyArrayNew.size() >= Constants::bodyArrayNewMaxSize){
+        bodyArrayNew.pop_back();
+    }
+    
+}
 
 bool gestureTestMidle(double y1, double x1, double y2, double x2){
     if(abs(x1 - x2) <= 0.05*sqrt(pow((y1-y2),2) + pow((x1-x2),2))){
@@ -51,10 +76,10 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
     const auto& elbowRight = body.jointPositions[9];
     const auto& handRight = body.jointPositions[11];
     
-    time[bodyNumber] ++;
+    time_count[bodyNumber] ++;
     
     if(body.isTracked){
-        if (time[bodyNumber]==1) {
+        if (time_count[bodyNumber]==1) {
             if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
                 if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
                     start_wave[bodyNumber] = 1;
@@ -62,7 +87,7 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
                 else{
                     start_wave[bodyNumber] = 0;
                 }
-                lastTime_wave1[bodyNumber]=time[bodyNumber];
+                lastTime_wave1[bodyNumber]=time_count[bodyNumber];
                 count[bodyNumber]++;
                 ROS_INFO("Fant 1");
             }
@@ -77,14 +102,14 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
                         else{
                             start_wave[bodyNumber] = 0;
                         }
-                        lastTime_wave1[bodyNumber]=time[bodyNumber];
+                        lastTime_wave1[bodyNumber]=time_count[bodyNumber];
                         count[bodyNumber]++;
                         ROS_INFO("Fant 1");
                     }
                     else if(start_wave[bodyNumber] == 0){
                         if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
                             start_wave[bodyNumber] = 1;
-                            lastTime_wave2[bodyNumber]=time[bodyNumber];
+                            lastTime_wave2[bodyNumber]=time_count[bodyNumber];
                             count[bodyNumber]++;
                             ROS_INFO("Fant 1");
                         }
@@ -92,7 +117,7 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
                     else{
                         if(gestureTestRight(elbowRight.position.y, elbowRight.position.x, handRight.position.y, handRight.position.x)){
                             start_wave[bodyNumber] = 0;
-                            lastTime_wave2[bodyNumber]=time[bodyNumber];
+                            lastTime_wave2[bodyNumber]=time_count[bodyNumber];
                             count[bodyNumber] ++;
                             ROS_INFO("Fant 1");
                         }
@@ -102,17 +127,17 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
         }
     }
     if(count[bodyNumber]==0){
-        time[bodyNumber] = 0;
+        time_count[bodyNumber] = 0;
     }
-    else if(time_wave[bodyNumber] > 60 && count[bodyNumber] < 3){
+    else if(time_count[bodyNumber] > 60 && count[bodyNumber] < 3){
         if (count[bodyNumber] == 2) {
-            time[bodyNumber] -=(lastTime_wave2[bodyNumber]-1);
+            time_count[bodyNumber] -=(lastTime_wave2[bodyNumber]-1);
             lastTime_wave2[bodyNumber] = 0;
             lastTime_wave1[bodyNumber] = 1;
         }
         else {
             lastTime_wave1[bodyNumber] = 0;
-            time[bodyNumber] = 0;
+            time_count[bodyNumber] = 0;
             start_wave[bodyNumber]=2;
         }
         count[bodyNumber] --;
@@ -136,7 +161,7 @@ bool gesture_start(){
                     count[j] = 0;
                     lastTime_wave1[j]=0;
                     lastTime_wave2[j]=0;
-                    time[j] = 0;
+                    time_count[j] = 0;
                 }
                 break;
             }
@@ -177,32 +202,7 @@ bool gestures(const k2_client::Body& body, int b){
 
 
 
-namespace Constants {
-    int bodyArrayHistoryMaxSize = 90;
-    int bodyArrayNewMaxSize = 10;
-}
 
-//std::deque<k2_client::BodyArray> bodyArrayHistory;
-
-struct boolArray{
-    bool data[6] = {false,false,false,false,false,false};
-};
-
-std::deque<boolArray> bodyArrayHistory;
-
-std::deque<k2_client::BodyArray> bodyArrayNew;
-
-
-// Subscriber callback function for recieving BodyArray msg from k2_client
-void gesture_sub_cb(const k2_client::BodyArray msg){
-    //ROS_INFO_NAMED("personGesture", "personGesture: Received bodyArray");
-    
-    bodyArrayNew.push_back(msg);
-    if (bodyArrayNew.size() >= Constants::bodyArrayNewMaxSize){
-        bodyArrayNew.pop_back();
-    }
-    
-}
 
 
 int gestureCall(int b){
@@ -219,7 +219,7 @@ int gestureCall(int b){
                 }
             }
             else{
-                time[i]++;
+                time_count[i]++;
             }
         }
         bodyArrayHistory.push_front(temp);
@@ -235,7 +235,7 @@ int gestureCall(int b){
         }
         afk_count = 0;
         for(int i = 0; i <= 6; i++){
-            if (time[i] > 120) {
+            if (time_count[i] > 120) {
                 afk_count++;
             }
             if (count[i] >= 30){
