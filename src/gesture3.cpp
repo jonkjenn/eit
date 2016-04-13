@@ -182,6 +182,7 @@ bool gestureStop(const k2_client::Body& body){
     const auto& handRight = body.jointPositions[11];
     
     if(handRight.position.z > (shoulderRight.position.z-0.2) && body.handRightState==2){
+       ROS_INFO("Hand");
         return true;
     }
     else{
@@ -193,7 +194,6 @@ bool gestureStop(const k2_client::Body& body){
 bool gestures(const k2_client::Body& body, int b){
     switch(b){
         case 1:
-            ROS_INFO("Hand");
             return gestureStop(body);
             break;
         default :
