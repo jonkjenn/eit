@@ -76,7 +76,7 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
     const auto& handRight = body.jointPositions[11];
     
     time_count[bodyNumber] ++;
-    //ROS_INFO("Wave test");
+    
     if(body.isTracked){
         if (time_count[bodyNumber]==1) {
             if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
@@ -150,12 +150,12 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
 bool gesture_start(){
     bool ret = false;
     for(const auto& bodyArray : bodyArrayNew){
-        for(int i = 0; i <= 6; i++){
+        for(int i = 0; i < 6; i++){
             gestureWave(bodyArray.bodies[i],i);
             if (count[i] >2) {
                 ret = true;
                 ROS_INFO("Wave funnet");
-                for (int j=0; j <= 6; j++) {
+                for (int j=0; j < 6; j++) {
                     start_wave[j] = 2;
                     count[j] = 0;
                     lastTime_wave1[j]=0;
@@ -212,7 +212,7 @@ int gestureCall(int b){
     bool success = false;
     for(const auto& bodyArray : bodyArrayNew){
         boolArray temp;
-        for(int i = 0; i <= 6; i++){
+        for(int i = 0; i < 6; i++){
             temp.data[i]=false;
             if(bodyArray.bodies[i].isTracked){
                 time_count[i]=0;
@@ -229,7 +229,7 @@ int gestureCall(int b){
         
         const auto& historyBack = bodyArrayHistory.back();
         if(bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize){
-            for(int i = 0; i <= 6; i++){
+            for(int i = 0; i < 6; i++){
                 if(count[i] > 0 && count[i] < 30 && historyBack.data[i]){
                     count[i]--;
                 }
@@ -237,7 +237,7 @@ int gestureCall(int b){
             bodyArrayHistory.pop_back();
         }
         afk_count = 0;
-        for(int i = 0; i <= 6; i++){
+        for(int i = 0; i < 6; i++){
             if (time_count[i] > 120) {
                 afk_count++;
             }
@@ -274,7 +274,7 @@ int main(int argc,char **argv){
     // Subsribe to topic "bodyArray" published by k2_klient package node startBody.cpp
     ros::Subscriber gesture_sub = n.subscribe("head/kinect2/bodyArray", 1000, gesture_sub_cb);
     
-    ros::Rate loop_rate(3); //0.1
+    ros::Rate loop_rate(6); //0.1
     
     // Run the ROS node
     ROS_INFO_NAMED("personGesture", "personGesture: Running ROS node...");
