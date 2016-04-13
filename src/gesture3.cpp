@@ -39,7 +39,7 @@ void gesture_sub_cb(const k2_client::BodyArray msg){
 }
 
 bool gestureTestMidle(double y1, double x1, double y2, double x2){
-    if(abs(x1 - x2) <= 0.05*sqrt(pow((y1-y2),2) + pow((x1-x2),2))){
+    if(fabs(x1 - x2) <= 0.05*sqrt(pow((y1-y2),2) + pow((x1-x2),2))){
         return true;
     }
     else{
@@ -48,7 +48,7 @@ bool gestureTestMidle(double y1, double x1, double y2, double x2){
 }
 
 bool gestureTestRight(double y1, double x1, double y2, double x2){
-    if(x1 < x2 && abs(x1 - x2) > 0.05*sqrt(pow((y1-y2),2) + pow((x1-x2),2))){
+    if(x1 < x2 && fabs(x1 - x2) > 0.05*sqrt(pow((y1-y2),2) + pow((x1-x2),2))){
         return true;
     }
     else{
@@ -57,13 +57,15 @@ bool gestureTestRight(double y1, double x1, double y2, double x2){
 }
 
 bool gestureTestAbove(double y1, double x1, double y2, double x2){
-    if(y1 > y2 && abs(y1 - y2) > 0.05*sqrt(pow((y1-y2),2) + pow((x1-x2),2))){
+    if(y2 < y1 && fabs(y1 - y2) > 0.05*sqrt(pow((y1-y2),2) + pow((x1-x2),2))){
         return true;
     }
     else{
         return false;
     }
 }
+
+
 
 
 
