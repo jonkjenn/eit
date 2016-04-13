@@ -71,3 +71,21 @@ bool gestureHandsStraightUp(const k2_client::Body:: body){
     }
 
 }
+
+
+bool gestureStandOnToes(const k2_client::Body:: body){
+    const auto& footRight = body.jointPosition[19];
+    const auto& footLeft = body.jointPosition[15];
+    const auto& ankleRight = body.jointPosition[18];
+    const auto& ankleLeft = body.jointPosition[14];
+
+
+    if ( (ankleRight.jointPosition.y - footRight.jointPosition.y)>0.05 && (ankleLeft.jointPosition.y - footLeft.jointPosition.y)>0.05){
+        return true;
+    }
+
+    else{
+        return falsen; 
+    }
+}
+
