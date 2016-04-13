@@ -196,10 +196,9 @@ bool gestureLiftRightFoot(const k2_client::Body& body){
     const auto& kneeLeft = body.jointPositions[13];
     
     //Sjekker om høyre kne er høyere enn venstre kne
-    if(kneeright.position.y > ((kneeLeft.position.y)0.1) ){
+    if(kneeRight.position.y > ((kneeLeft.position.y)+0.05) ){
         return true;
     }
-    
     else{
         return false;
     }
@@ -229,7 +228,7 @@ bool gestureXrossLegs(const k2_client::Body:: body){
     const auto& ankleRight = body.jointPositions[18];
     const auto& ankleLeft = body.jointPositions[14];
 
-    if(ankleRight.position.x > ankleLeft.positionx or ankleLeft.position.x < ankleRight.position.x){
+    if(ankleRight.position.x > ankleLeft.position.x or ankleLeft.position.x < ankleRight.position.x){
         return true;
 
     }
