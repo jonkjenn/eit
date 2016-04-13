@@ -230,7 +230,7 @@ int gestureCall(int b){
         const auto& historyBack = bodyArrayHistory.back();
         if(bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize){
             for(int i = 0; i <= 6; i++){
-                if(count[i] > 0 && count[i] < 30 && historyBack[i]){
+                if(count[i] > 0 && count[i] < 30 && historyBack.data[i]){
                     count[i]--;
                 }
             }
