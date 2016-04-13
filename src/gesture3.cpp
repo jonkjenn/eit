@@ -224,7 +224,7 @@ bool gestureFlexnes(const k2_client::Body& body){
 
 
 
-bool gestureXrossLegs(const k2_client::Body:: body){
+bool gestureXrossLegs(const k2_client::Body& body){
     const auto& ankleRight = body.jointPositions[18];
     const auto& ankleLeft = body.jointPositions[14];
 
@@ -237,7 +237,7 @@ bool gestureXrossLegs(const k2_client::Body:: body){
     }
 }
 
-bool gestureHandsStraightUp(const k2_client::Body:: body){
+bool gestureHandsStraightUp(const k2_client::Body& body){
     const auto& elbowLeft = body.jointPosition[5]; 
     const auto& elbowRight = body.jointPosition[9];
     const auto& head = body.jointPosition[3];
@@ -254,7 +254,7 @@ bool gestureHandsStraightUp(const k2_client::Body:: body){
 }
 
 
-bool gestureStandOnToes(const k2_client::Body:: body){
+bool gestureStandOnToes(const k2_client::Body& body){
     const auto& footRight = body.jointPosition[19];
     const auto& footLeft = body.jointPosition[15];
     const auto& ankleRight = body.jointPosition[18];
