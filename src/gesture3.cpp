@@ -31,7 +31,7 @@ std::deque<k2_client::BodyArray> bodyArrayNew;
 
 // Subscriber callback function for recieving BodyArray msg from k2_client
 void gesture_sub_cb(const k2_client::BodyArray msg){
-    //ROS_INFO_NAMED("personGesture", "personGesture: Received bodyArray");
+    ROS_INFO_NAMED("personGesture", "personGesture: Received bodyArray");
     
     bodyArrayNew.push_back(msg);
     if (bodyArrayNew.size() >= Constants::bodyArrayNewMaxSize){
@@ -76,7 +76,7 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
     const auto& handRight = body.jointPositions[11];
     
     time_count[bodyNumber] ++;
-    
+    ROS_INFO("Wave test");
     if(body.isTracked){
         if (time_count[bodyNumber]==1) {
             if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
