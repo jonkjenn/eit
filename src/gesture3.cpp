@@ -76,7 +76,9 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
     time_count[bodyNumber] ++;
     if(body.isTracked){
         if(gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
+            ROS_INFO("Over");
             if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false){
+                ROS_INFO("Midle");
                 if (time_count[bodyNumber]==1) {
                     if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
                         start_wave[bodyNumber] = 1;
@@ -120,7 +122,6 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
             }
         }
     }
-    ROS_INFO_STREAM(count[bodyNumber]);
     if(count[bodyNumber]==0){
         time_count[bodyNumber] = 0;
     }
