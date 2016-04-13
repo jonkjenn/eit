@@ -26,6 +26,7 @@ bool aboveAngle = false;
 bool aboveLength = false;
 bool prevAboveAngle = false;
 bool prevAboveLength = false;
+int lr = 6;
 
 bool stopped = false;
 
@@ -117,11 +118,11 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
 		// Set the angular velocity
 		//ROS_INFO_STREAM(msg.bodies[s].jointPositions[0].position.z);
 		if(msg.bodies[s].jointPositions[0].position.x >= 0.2){
-			vel_msg.angular.z = 0.18;
+			vel_msg.angular.z = 0.20;
 			aboveAngle = true;
 		} 
 		else if(msg.bodies[s].jointPositions[0].position.x <= -0.2){
-			vel_msg.angular.z = -0.18;
+			vel_msg.angular.z = -0.20;
 			aboveAngle = true;
 		}
 		else{
@@ -131,7 +132,7 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
 		}
 		// Set the forward velocity
 		if(msg.bodies[s].jointPositions[0].position.z >= 1.5){
-			vel_msg.linear.x = 0.18; //msg.bodies[s].jointPositions[3].position.z/7;
+			vel_msg.linear.x = 0.20; //msg.bodies[s].jointPositions[3].position.z/7;
 			aboveLength = true;
 			underLenCount = 0;
 		}
@@ -145,11 +146,11 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
 			//personPos_pub.publish(vel_msg);
 		}
 	}
-	if(checkCount > 0 && checkCount < 2*loop_rate){
+	if(checkCount > 0 && checkCount < 2*lr){
     		checkCount++;
     		vel_msg = prev_vel_msg;
 	}
-  	else if(checkCount >= 2*loop_rate){
+  	else if(checkCount >= 2*lr){
     	checkCount = 0;
   	}
 	
@@ -184,7 +185,7 @@ int main(int argc,char **argv){
 	ros::Subscriber laser_sub = n.subscribe("RosAria/S3Series_1_laserscan", 1, laser_sub_cb); 
 	ros::Subscriber bumper_sub = n.subscribe("RosAria/bumper_state", 1, bumper_state_sub_cb);
 
-	ros::Rate loop_rate(30); //0.1
+	ros::Rate loop_rate(lr); //0.1
 
 	ROS_INFO_NAMED("personFollower", "personFollower: Running ROS node...");
 	while (ros::ok()){

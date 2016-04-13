@@ -20,6 +20,10 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(Jsoncpp REQUIRED)
 
+#find_package(PythonLibs REQUIRED)
+#include_directories(${PYTHON_INCLUDE_DIRS})
+#target_link_libraries(/usr/bin/python ${PYTHON_LIBRARIES})
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -137,7 +141,7 @@ include_directories(
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
 # add_dependencies(decision_maker ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-SET(CMAKE_CXX_FLAGS "-std=c++0x")
+SET(CMAKE_CXX_FLAGS "-std=c++0x -Wall")
 
 ## Declare a C++ executable
 add_executable(personfollower src/personFollower.cpp)
