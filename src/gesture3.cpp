@@ -15,8 +15,8 @@ int time_count[6] = {0,0,0,0,0,0};
 
 
 namespace Constants {
-    int bodyArrayHistoryMaxSize = 90;
-    int bodyArrayNewMaxSize = 10;
+   unsigned int bodyArrayHistoryMaxSize = 90;
+   unsigned int bodyArrayNewMaxSize = 10;
 }
 
 //std::deque<k2_client::BodyArray> bodyArrayHistory;
@@ -196,7 +196,10 @@ bool gestures(const k2_client::Body& body, int b){
         case 1:
             return gestureStop(body);
             break;
+        default :
+            return false;
     }
+    
     
 }
 
@@ -212,8 +215,8 @@ int gestureCall(int b){
         boolArray temp;
         for(int i = 0; i <= 6; i++){
             if(bodyArray.bodies[i].isTracked){
-                afk[i]=0;
-                if(gestures(bodyArray.bodies[i])){
+                time_count[i]=0;
+                if(gestures(bodyArray.bodies[i],b)){
                     count[i]++;
                     temp.data[i]=true;
                 }
@@ -294,4 +297,3 @@ int main(int argc,char **argv){
     ROS_INFO_NAMED("personGesture",  "personGesture: Quitting... \n" );
     return 0;
 }
-
