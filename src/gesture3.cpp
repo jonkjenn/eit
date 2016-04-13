@@ -208,7 +208,7 @@ bool gestures(const k2_client::Body& body, int b){
 
 
 int gestureCall(int b){
-    int afk_count;
+    int afk_count=0;
     bool success = false;
     for(const auto& bodyArray : bodyArrayNew){
         boolArray temp;
