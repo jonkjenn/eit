@@ -181,7 +181,8 @@ bool gestureStop(const k2_client::Body& body){
     const auto& shoulderRight = body.jointPositions[8];
     const auto& handRight = body.jointPositions[11];
     
-    if(handRight.position.z > (shoulderRight.position.z-0.2) && body.handRightState==2){
+    if(handRight.position.z < (shoulderRight.position.z-0.2) && body.handRightState==2){
+        ROS_INFO("Hand");
         return true;
     }
     else{
@@ -238,7 +239,6 @@ int gestureCall(int b){
         }
         afk_count = 0;
         for(int i = 0; i < 6; i++){
-            ROS_INFO_STREAM(count[i]);
             if (time_count[i] > 120) {
                 afk_count++;
             }
