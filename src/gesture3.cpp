@@ -1,5 +1,3 @@
-//#include <math.h>
-
 #include "ros/ros.h"
 #include <k2_client/k2_client.h>
 #include <k2_client/BodyArray.h>
@@ -14,8 +12,8 @@ int lastTime_wave2[6] = {0,0,0,0,0,0};
 int time_count[6] = {0,0,0,0,0,0};
 
 namespace Constants {
-   unsigned int bodyArrayHistoryMaxSize = 45;
-   unsigned int bodyArrayNewMaxSize = 10;
+    unsigned int bodyArrayHistoryMaxSize = 45;
+    unsigned int bodyArrayNewMaxSize = 10;
 }
 
 //std::deque<k2_client::BodyArray> bodyArrayHistory;
@@ -76,24 +74,21 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
     const auto& handRight = body.jointPositions[11];
     
     time_count[bodyNumber] ++;
-    
     if(body.isTracked){
-        if (time_count[bodyNumber]==1) {
-            if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false && gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
-                if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
-                    start_wave[bodyNumber] = 1;
+        if(gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
+            if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false){
+                if (time_count[bodyNumber]==1) {
+                    if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
+                        start_wave[bodyNumber] = 1;
+                    }
+                    else{
+                        start_wave[bodyNumber] = 0;
+                    }
+                    lastTime_wave1[bodyNumber]=time_count[bodyNumber];
+                    count[bodyNumber]++;
+                    ROS_INFO("Fant 1");
                 }
                 else{
-                    start_wave[bodyNumber] = 0;
-                }
-                lastTime_wave1[bodyNumber]=time_count[bodyNumber];
-                count[bodyNumber]++;
-                ROS_INFO("Fant 1");
-            }
-        }
-        else{
-            if(gestureTestAbove(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
-                if(gestureTestMidle(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x) == false){
                     if(start_wave[bodyNumber] == 2){
                         if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
                             start_wave[bodyNumber] = 1;
@@ -125,10 +120,11 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
             }
         }
     }
+    ROS_INFO_STREAM(count[bodyNumber]);
     if(count[bodyNumber]==0){
         time_count[bodyNumber] = 0;
     }
-    else if(time_count[bodyNumber] > 60 && count[bodyNumber] < 3){
+    else if(time_count[bodyNumber] > 120 && count[bodyNumber] < 3){
         if (count[bodyNumber] == 2) {
             time_count[bodyNumber] -=(lastTime_wave2[bodyNumber]-1);
             lastTime_wave2[bodyNumber] = 0;
@@ -182,7 +178,6 @@ bool gestureStop(const k2_client::Body& body){
     const auto& handRight = body.jointPositions[11];
     
     if(handRight.position.z < (shoulderRight.position.z-0.2) && body.handRightState==2){
-        ROS_INFO("Hand");
         return true;
     }
     else{
@@ -227,10 +222,10 @@ bool gestureFlexnes(const k2_client::Body& body){
 bool gestureXrossLegs(const k2_client::Body& body){
     const auto& ankleRight = body.jointPositions[18];
     const auto& ankleLeft = body.jointPositions[14];
-
+    
     if(ankleRight.position.x > ankleLeft.position.x or ankleLeft.position.x < ankleRight.position.x){
         return true;
-
+        
     }
     else {
         return false;
@@ -238,19 +233,19 @@ bool gestureXrossLegs(const k2_client::Body& body){
 }
 
 bool gestureHandsStraightUp(const k2_client::Body& body){
-    const auto& elbowLeft = body.jointPositions[5]; 
+    const auto& elbowLeft = body.jointPositions[5];
     const auto& elbowRight = body.jointPositions[9];
     const auto& head = body.jointPositions[3];
     const auto& shoulderRight = body.jointPositions[8];
     const auto& shoulderLeft = body.jointPositions[4];
-
+    
     if(  elbowRight.position.y > head.position.y && elbowLeft.position.y > head.position.y && abs(shoulderRight.position.x - elbowRight.position.x)<0.1 && abs(shoulderLeft.position.x - elbowLeft.position.x)<0.1                         ){
         return true;
     }
     else{
         return false;
     }
-
+    
 }
 
 
@@ -259,14 +254,14 @@ bool gestureStandOnToes(const k2_client::Body& body){
     const auto& footLeft = body.jointPositions[15];
     const auto& ankleRight = body.jointPositions[18];
     const auto& ankleLeft = body.jointPositions[14];
-
-
-   if ( (ankleRight.position.y - footRight.position.y)>0.05 && (ankleLeft.position.y - footLeft.position.y)>0.05){
+    
+    
+    if ( (ankleRight.position.y - footRight.position.y)>0.05 && (ankleLeft.position.y - footLeft.position.y)>0.05){
         return true;
-   }
-   else{
-        return false; 
-   }
+    }
+    else{
+        return false;
+    }
 }
 
 
@@ -275,13 +270,13 @@ bool gestures(const k2_client::Body& body, int b){
         case 1:
             return gestureStop(body);
             break;
-         case 2:
+        case 2:
             return gestureLiftRightFoot(body);
             break;
-         case 3:
+        case 3:
             return gestureStandOnToes(body);
             break;
-         case 4:
+        case 4:
             return gestureFlexnes(body);
             break;
         default :
@@ -321,7 +316,7 @@ int gestureCall(int b){
         if(bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize){
             for(int i = 0; i < 6; i++){
                 if(count[i] > 0 && count[i] < 30 && historyBack.data[i]){
-                   ROS_INFO_STREAM(count[i]);
+                    ROS_INFO_STREAM(count[i]);
                     count[i]--;
                 }
             }
@@ -380,7 +375,7 @@ int main(int argc,char **argv){
         ros::spinOnce();
         loop_rate.sleep();
         if (state) {
-            int b = 4;
+            int b = 1;
             if(gestureCall(b)!= 2){
                 state = false;
             }
@@ -392,4 +387,3 @@ int main(int argc,char **argv){
     ROS_INFO_NAMED("personGesture",  "personGesture: Quitting... \n" );
     return 0;
 }
-
