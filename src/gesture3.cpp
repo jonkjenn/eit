@@ -154,7 +154,7 @@ void gesture_sub_cb(const k2_client::BodyArray msg){
     bodyArrayNew.push_back(msg);
     if (bodyArrayNew.size() >= Constants::bodyArrayNewMaxSize){
         ROS_INFO("Fail?");
-        bodyArrayNew.pop_back();
+        bodyArrayNew.pop_front();
         ROS_INFO("Nope");
     }
     
@@ -215,13 +215,14 @@ int main(int argc,char **argv){
         }
         else{
             for(const auto& bodyArray : bodyArrayNew){
+                s = -1;
                 for(int i = 0; i <= 6; i++){
                     if(bodyArray.bodies[i].isTracked){
                         s = i;
                         break;
                     }
                 }
-                if(bodyArray.bodies[s].isTracked){
+                if(s != -1 && bodyArray.bodies[s].isTracked){
                     afk=0;
                     if(gestureStop(bodyArray.bodies[s])){
                         count_stop++;
@@ -232,11 +233,9 @@ int main(int argc,char **argv){
                 }
                 bodyArrayHistory.push_front(bodyArray);
                 const auto& historyBack = bodyArrayHistory.back();
-                if(bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize && count_stop < 30){
+                if(bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize && count_stop < 30 && s != -1){
                     if(gestureStop(historyBack.bodies[s]) && count_stop > 0){
-                        ROS_INFO("Fail?");
                         count_stop--;
-                        ROS_INFO("Nope");
                     }
                     ROS_INFO("Fail?");
                     bodyArrayHistory.pop_back();

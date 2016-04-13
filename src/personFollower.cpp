@@ -30,6 +30,8 @@ int lr = 6;
 
 bool stopped = false;
 
+bool use_coordinator = false; //Should coordinator be used?
+
 //int count = 0;
 int underLenCount = 0;
 
