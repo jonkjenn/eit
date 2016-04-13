@@ -13,7 +13,6 @@ int lastTime_wave1[6] = {0,0,0,0,0,0};
 int lastTime_wave2[6] = {0,0,0,0,0,0};
 int time_count[6] = {0,0,0,0,0,0};
 
-
 namespace Constants {
    unsigned int bodyArrayHistoryMaxSize = 90;
    unsigned int bodyArrayNewMaxSize = 10;
@@ -22,7 +21,7 @@ namespace Constants {
 //std::deque<k2_client::BodyArray> bodyArrayHistory;
 
 struct boolArray{
-    bool data[6] = {false,false,false,false,false,false};
+    bool data[6];
 };
 
 std::deque<boolArray> bodyArrayHistory;
@@ -214,6 +213,7 @@ int gestureCall(int b){
     for(const auto& bodyArray : bodyArrayNew){
         boolArray temp;
         for(int i = 0; i <= 6; i++){
+            temp.data[i]=false;
             if(bodyArray.bodies[i].isTracked){
                 time_count[i]=0;
                 if(gestures(bodyArray.bodies[i],b)){
@@ -297,3 +297,4 @@ int main(int argc,char **argv){
     ROS_INFO_NAMED("personGesture",  "personGesture: Quitting... \n" );
     return 0;
 }
+
