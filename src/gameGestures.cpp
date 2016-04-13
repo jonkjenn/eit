@@ -56,7 +56,7 @@ bool gestureXrossLegs(const k2_client::Body:: body){
     }
 }
 
-bool gestureHansStraightUp(const k2_client::Body:: body){
+bool gestureHandsStraightUp(const k2_client::Body:: body){
     const auto& elbowLeft = body.jointPosition[5]; 
     const auto& elbowRight = body.jointPosition[9];
     const auto& head = body.jointPosition[3];
