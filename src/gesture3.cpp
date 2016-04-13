@@ -218,6 +218,7 @@ int gestureCall(int b){
             if(bodyArray.bodies[i].isTracked){
                 time_count[i]=0;
                 if(gestures(bodyArray.bodies[i],b)){
+                    ROS_INFO_STREAM(count[i]);
                     count[i]++;
                     temp.data[i]=true;
                 }
@@ -232,6 +233,7 @@ int gestureCall(int b){
         if(bodyArrayHistory.size() >= Constants::bodyArrayHistoryMaxSize){
             for(int i = 0; i < 6; i++){
                 if(count[i] > 0 && count[i] < 30 && historyBack.data[i]){
+                   ROS_INFO_STREAM(count[i]);
                     count[i]--;
                 }
             }
