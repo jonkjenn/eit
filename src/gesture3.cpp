@@ -379,7 +379,7 @@ int main(int argc,char **argv){
         ros::spinOnce();
         loop_rate.sleep();
         if (state) {
-            int b = 6;
+            int b = 5;
             if(gestureCall(b)!= 2){
                 state = false;
             }
