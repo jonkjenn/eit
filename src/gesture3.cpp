@@ -237,7 +237,7 @@ bool gestureHandsStraightUp(const k2_client::Body& body){
     const auto& shoulderRight = body.jointPositions[8];
     const auto& shoulderLeft = body.jointPositions[4];
     
-    if(  elbowRight.position.y > head.position.y && elbowLeft.position.y > head.position.y && abs(shoulderRight.position.x - elbowRight.position.x)<0.1 && abs(shoulderLeft.position.x - elbowLeft.position.x)<0.1                         ){
+    if(  elbowRight.position.y > head.position.y && elbowLeft.position.y > head.position.y && fabs(shoulderRight.position.x - elbowRight.position.x)<0.1 && fabs(shoulderLeft.position.x - elbowLeft.position.x)<0.1                         ){
         return true;
     }
     else{
