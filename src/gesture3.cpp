@@ -117,8 +117,8 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
                 }
             }
         }
+        ROS_INFO_STREAM(count[bodyNumber]);
     }
-    ROS_INFO_STREAM(count[bodyNumber]);
     if(count[bodyNumber]==0){
         time_count[bodyNumber] = 0;
     }
@@ -328,7 +328,7 @@ int gestureCall(int b){
         }
         afk_count = 0;
         for(int i = 0; i < 6; i++){
-            if (time_count[i] > 120) {
+            if (time_count[i] > 50) {
                 afk_count++;
             }
             if (count[i] >= 30){
@@ -379,7 +379,7 @@ int main(int argc,char **argv){
         ros::spinOnce();
         loop_rate.sleep();
         if (state) {
-            int b = 5;
+            int b = 6;
             if(gestureCall(b)!= 2){
                 state = false;
             }
