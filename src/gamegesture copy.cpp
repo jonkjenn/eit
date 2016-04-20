@@ -260,7 +260,7 @@ bool gestureTouchRightFoot(const k2_client::Body& body){
     const auto& wristLeft  = body.jointPositions[6];
     
     
-    if ( (fabs(wristRight.position.y - footRight.position.y)<0.2 && fabs(wristRight.position.x - footRight.position.x)<0.2) || (fabs(wristLeft.position.y - footRight.position.y)<0.2 && fabs(wristLeft.position.y - footRight.position.y)<0.2){
+    if ( (fabs(wristRight.position.y - footRight.position.y)<0.2 && fabs(wristRight.position.x - footRight.position.x)<0.2) || (fabs(wristLeft.position.x - footRight.position.x)<0.2 && fabs(wristLeft.position.y - footRight.position.y)<0.2){
         return true;
     }
     else{
