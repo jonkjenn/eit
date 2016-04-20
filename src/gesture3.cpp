@@ -254,7 +254,7 @@ bool gestureStandOnToes(const k2_client::Body& body){
     const auto& ankleLeft = body.jointPositions[14];
     
     
-    if ( (ankleRight.position.y - footRight.position.y)>0.05 && (ankleLeft.position.y - footLeft.position.y)>0.05){
+    if ( (ankleRight.position.y - footRight.position.y)>0.04 && (ankleLeft.position.y - footLeft.position.y)>0.05){
         return true;
     }
     else{
@@ -279,6 +279,9 @@ bool gestures(const k2_client::Body& body, int b){
             break;
         case 5:
             return gestureHandsStraightUp(body);
+            break;
+        case 6:
+            return gestureXrossLegs(body);
             break;
         default :
             return false;
