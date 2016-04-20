@@ -122,7 +122,7 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
     if(count[bodyNumber]==0){
         time_count[bodyNumber] = 0;
     }
-    else if(time_count[bodyNumber] > 120 && count[bodyNumber] < 3){
+    else if(time_count[bodyNumber] > 30 && count[bodyNumber] < 3){
         if (count[bodyNumber] == 2) {
             time_count[bodyNumber] -=(lastTime_wave2[bodyNumber]-1);
             lastTime_wave2[bodyNumber] = 0;
