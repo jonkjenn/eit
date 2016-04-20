@@ -7,8 +7,8 @@
 
 int count[6] = {0,0,0,0,0,0};
 int start_wave[6] = {2,2,2,2,2,2};
-int lastTime_wave1[6] = {0,0,0,0,0,0};
-int lastTime_wave2[6] = {0,0,0,0,0,0};
+int lastTime_wave[18] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+//int lastTime_wave2[6] = {0,0,0,0,0,0};
 int time_count[6] = {0,0,0,0,0,0};
 
 namespace Constants {
@@ -122,14 +122,19 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
     if(count[bodyNumber]==0){
         time_count[bodyNumber] = 0;
     }
-    else if(time_count[bodyNumber] > 30 && count[bodyNumber] < 3){
-        if (count[bodyNumber] == 2) {
-            time_count[bodyNumber] -=(lastTime_wave2[bodyNumber]-1);
-            lastTime_wave2[bodyNumber] = 0;
-            lastTime_wave1[bodyNumber] = 1;
+    else if(time_count[bodyNumber] > 30 && count[bodyNumber] < 4){
+        if (count[bodyNumber] == 3) {
+            time_count[bodyNumber] -=(lastTime_wave[bodyNumber+6]-1);
+            lastTime_wave[bodyNumber+6*count[bodyNumber]] = 0;
+            lastTime_wave[bodyNumber] = 1;
+        }
+        else if (count[bodyNumber] == 2) {
+            time_count[bodyNumber] -=(lastTime_wave[bodyNumber+6]-1);
+            lastTime_wave[bodyNumber+6*count[bodyNumber]] = 0;
+            lastTime_wave[bodyNumber] = 1;
         }
         else {
-            lastTime_wave1[bodyNumber] = 0;
+            lastTime_wave[bodyNumber] = 0;
             time_count[bodyNumber] = 0;
             start_wave[bodyNumber]=2;
         }
