@@ -277,6 +277,9 @@ bool gestures(const k2_client::Body& body, int b){
         case 4:
             return gestureFlexnes(body);
             break;
+        case 5:
+            return gestureHandsStraightUp(body);
+            break;
         default :
             return false;
     }
