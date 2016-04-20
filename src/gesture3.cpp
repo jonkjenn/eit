@@ -86,7 +86,7 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
                     else{
                         start_wave[bodyNumber] = 0;
                     }
-                    lastTime_wave1[bodyNumber]=time_count[bodyNumber];
+                    lastTime_wave[bodyNumber]=time_count[bodyNumber];
                     count[bodyNumber]++;
                 }
                 else{
@@ -97,20 +97,20 @@ void gestureWave(const k2_client::Body& body, int bodyNumber){
                         else{
                             start_wave[bodyNumber] = 0;
                         }
-                        lastTime_wave1[bodyNumber]=time_count[bodyNumber];
+                        lastTime_wave[bodyNumber]=time_count[bodyNumber];
                         count[bodyNumber]++;
                     }
                     else if(start_wave[bodyNumber] == 0){
                         if(gestureTestRight(handRight.position.y, handRight.position.x, elbowRight.position.y, elbowRight.position.x)){
                             start_wave[bodyNumber] = 1;
-                            lastTime_wave2[bodyNumber]=time_count[bodyNumber];
+                            lastTime_wave[bodyNumber+6*count[bodyNumber]]=time_count[bodyNumber];
                             count[bodyNumber]++;
                         }
                     }
                     else{
                         if(gestureTestRight(elbowRight.position.y, elbowRight.position.x, handRight.position.y, handRight.position.x)){
                             start_wave[bodyNumber] = 0;
-                            lastTime_wave2[bodyNumber]=time_count[bodyNumber];
+                            lastTime_wave[bodyNumber+6*count[bodyNumber]]=time_count[bodyNumber];
                             count[bodyNumber] ++;
                         }
                     }
