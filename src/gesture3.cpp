@@ -254,7 +254,7 @@ bool gestureStandOnToes(const k2_client::Body& body){
     const auto& ankleLeft = body.jointPositions[14];
     
     
-    if ( (ankleRight.position.y - footRight.position.y)>0.05 && (ankleLeft.position.y - footLeft.position.y)>0.05){
+    if ( (ankleRight.position.y - footRight.position.y)>0.04 && (ankleLeft.position.y - footLeft.position.y)>0.05){
         return true;
     }
     else{
@@ -279,6 +279,9 @@ bool gestures(const k2_client::Body& body, int b){
             break;
         case 5:
             return gestureHandsStraightUp(body);
+            break;
+        case 6:
+            return gestureXrossLegs(body);
             break;
         default :
             return false;
@@ -363,7 +366,7 @@ int main(int argc,char **argv){
     ros::NodeHandle n;
     
     // Subsribe to topic "bodyArray" published by k2_klient package node startBody.cpp
-    ros::Subscriber gesture_sub = n.subscribe("head/kinect2/bodyArray", 1000, gesture_sub_cb);
+    ros::Subscriber gesture_sub = n.subscribe("head/kinect2/bodyArray", 10, gesture_sub_cb);
     
     ros::Rate loop_rate(3); //0.1
     
@@ -376,7 +379,7 @@ int main(int argc,char **argv){
         ros::spinOnce();
         loop_rate.sleep();
         if (state) {
-            int b = 3;
+            int b = 4;
             if(gestureCall(b)!= 2){
                 state = false;
             }
