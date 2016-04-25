@@ -8,14 +8,17 @@
 #include <tf/transform_listener.h>
 #include <signal.h>
 #include <string>
+#include <cyborg_coordinator/RequestControl.h>
+#include <cyborg_coordinator/ReleaseControl.h>
 //#include "pid.h"
 
 using namespace std;
-//#include <algorithm> // min and max
 
 ros::Publisher personPos_pub;
 geometry_msgs::Twist vel_msg;
 geometry_msgs::Twist prev_vel_msg;
+
+string my_identifier = "personFollower";
 
 ros::Time prev_time;
 float prev_vel_z;
@@ -30,9 +33,9 @@ int lr = 6;
 
 bool stopped = false;
 
-bool use_coordinator = false; //Should coordinator be used?
+bool use_coordinator = true; //Should coordinator be used?
+bool has_control = false; //Has personFollower been given control?
 
-//int count = 0;
 int underLenCount = 0;
 
 void watchdog(int sig){
@@ -51,7 +54,7 @@ bool gestureTestMidle(const k2_client::Body& body){
 	const auto& shoulderLeft = body.jointPositions[4];
 	const auto& handLeft = body.jointPositions[7];
 
-	if(abs(shoulderRight.position.y - handRight.position.y) <= 0.2 && abs(shoulderLeft.position.y - handLeft.position.y) <= 0.2){
+	if(abs(shoulderRight.position.y - handRight.position.y) <= 0.2 || abs(shoulderLeft.position.y - handLeft.position.y) <= 0.2){
 		return true;
 	}
 	else{
@@ -62,108 +65,134 @@ bool gestureTestMidle(const k2_client::Body& body){
 void laser_sub_cb(const sensor_msgs::LaserScan msg){
 }
 
-void bumper_state_sub_cb(const rosaria::BumperState msg){
-	//ROS_INFO_STREAM("Bumpers: " << msg.front_bumpers.size());
+void bumper_state_sub_cb(const rosaria::BumperState msg){ //check if bumper is pushed in
 	for(bool b:msg.front_bumpers){
-		//ROS_INFO_STREAM("Bumper: " << b);
 		if(b){
+			ROS_INFO_STREAM("Stopping: ");
 			stopped = true;
 			return;
 		}
 	}
+	ROS_INFO_STREAM("Not stopped ");
 	stopped = false;
 }
 
 void bodies_sub_cb(const k2_client::BodyArray msg){
-	//ROS_INFO_NAMED("personFollower", "personFollower: Received bodyArray");
-
 	alarm(1);
-	//++count;
-
 	vel_msg.linear.y = 0; 
 	vel_msg.linear.z = 0; 
 	vel_msg.angular.x = 0;
 	vel_msg.angular.y = 0;
 
+	//if((false == use_coordinator || has_control) && stopped){
+	ROS_INFO_STREAM("Stopped? " << stopped);
 	if(stopped){
+		vel_msg.linear.x = 0;
+		vel_msg.angular.z = 0;
 		personPos_pub.publish(vel_msg);
+		cyborg_coordinator::ReleaseControl rel;
+		rel.request.id = my_identifier;
+		ros::service::call("/cyborg_coordinator/releaseControl", rel);
+		has_control = false;
 		return;
 	}
 
 	// Continue to track the same person, or find a new person to track (if any)
-	if(s != -1){
-		if(msg.bodies[s].isTracked == 0){
-			s = -1;
-			checkCount = 1;
-			//ROS_INFO_NAMED("personFollower", "personFollower: tracking ended");
-		}
-	}
+
 	if(s == -1){
-		//if(count > 10){
 		vel_msg.linear.x = 0;
 		vel_msg.angular.z = 0;
-		//}
 		aboveAngle = false;
 		aboveLength = false;
 		for(int i = 0; i < 6; i++){
 			if(msg.bodies[i].isTracked && gestureTestMidle(msg.bodies[i])){
 				s = i;
-				checkCount = 0;
-				//ROS_INFO_NAMED("personFollower", "personFollower: tracking new person");
 				break;
 			}
 		}
 	}
+
+	if(s != -1){
+		bool found = false;
+		for(int i = 0; i < 6; i++){
+			if(msg.bodies[i].isTracked && gestureTestMidle(msg.bodies[i])){
+				found = true;
+				break;
+			}
+		}
+		if(!found && checkCount==0){
+			s = -1;
+			checkCount = 1;
+		}
+	}
+
 	// Set the velocities
 	if(s != -1){
-		//count = 0;
-		// Set the angular velocity
-		//ROS_INFO_STREAM(msg.bodies[s].jointPositions[0].position.z);
-		if(msg.bodies[s].jointPositions[0].position.x >= 0.2){
-			vel_msg.angular.z = 0.20;
-			aboveAngle = true;
-		} 
-		else if(msg.bodies[s].jointPositions[0].position.x <= -0.2){
-			vel_msg.angular.z = -0.20;
-			aboveAngle = true;
+		if(use_coordinator == true && false == has_control) {
+			cyborg_coordinator::RequestControl req;
+			req.request.id = my_identifier;
+			ros::service::call("/cyborg_coordinator/requestControl", req); //ask for control
+			has_control = req.response.controlReceived;
 		}
-		else{
-			vel_msg.angular.z = 0;	
-			aboveAngle = false;
-			//personPos_pub.publish(vel_msg);
-		}
-		// Set the forward velocity
-		if(msg.bodies[s].jointPositions[0].position.z >= 1.5){
-			vel_msg.linear.x = 0.20; //msg.bodies[s].jointPositions[3].position.z/7;
-			aboveLength = true;
-			underLenCount = 0;
-		}
-		else if(msg.bodies[s].jointPositions[0].position.z < 1.5){
-			++underLenCount;
-			if(underLenCount > 3){
-				vel_msg.linear.x = 0;
-				aboveLength = false;
+		if(has_control == true || use_coordinator == false){
+			// Set the angular velocity
+			if(msg.bodies[s].jointPositions[0].position.x >= 0.2){
+				vel_msg.angular.z = 0.20;
+				aboveAngle = true;
+			} 
+			else if(msg.bodies[s].jointPositions[0].position.x <= -0.2){
+				vel_msg.angular.z = -0.20;
+				aboveAngle = true;
+			}
+			else{
+				vel_msg.angular.z = 0;	
+				aboveAngle = false;
+			}
+			// Set the forward velocity
+
+			if(msg.bodies[s].jointPositions[0].position.z >= 2.0){
+				vel_msg.linear.x = 0.20; //msg.bodies[s].jointPositions[3].position.z/7;
+				aboveLength = true;
 				underLenCount = 0;
 			}
-			//personPos_pub.publish(vel_msg);
+			else if(msg.bodies[s].jointPositions[0].position.z < 2.0){
+				++underLenCount;
+				if(underLenCount > 3){
+					vel_msg.linear.x = 0;
+					aboveLength = false;
+					underLenCount = 0;
+				}
+			}
 		}
 	}
-	if(checkCount > 0 && checkCount < 2*lr){
-    		checkCount++;
-    		vel_msg = prev_vel_msg;
+
+	//Check to see if some time threshold has been passed, if not, keep going
+	if(checkCount > 0 && checkCount < 2*lr){ 
+		checkCount++;
+		//ROS_INFO_STREAM("checkCount: " << checkCount);
+		vel_msg = prev_vel_msg;
 	}
-  	else if(checkCount >= 2*lr){
-    	checkCount = 0;
-  	}
-	
+	else if(checkCount >= 2*lr){
+		checkCount = 0;
+		if(has_control == true){
+			vel_msg.linear.x = 0;
+			vel_msg.angular.z = 0;
+			personPos_pub.publish(vel_msg);
+			cyborg_coordinator::ReleaseControl rel;
+			rel.request.id = my_identifier;
+			ros::service::call("/cyborg_coordinator/releaseControl", rel);
+			has_control = false;
+		}
+	}
+
+	//ROS_INFO_STREAM(std::boolalpha << "prevAboveAngle " << prevAboveAngle << " aboveAngle " << aboveAngle << " prevAboveLength " << prevAboveLength << " aboveLength " << aboveLength);
+
 	// Publish if there is a new state
-	//ROS_INFO_STREAM(prevAboveAngle);
-	//ROS_INFO_STREAM(aboveAngle);
-	if(prevAboveAngle != aboveAngle || prevAboveLength != aboveLength || s == -1){
-		//ROS_INFO_STREAM("Publishing message");
-		prev_vel_msg = vel_msg;
-		personPos_pub.publish(vel_msg);
-	}
+	//if(prevAboveAngle != aboveAngle || prevAboveLength != aboveLength || s == -1){
+	//ROS_INFO_STREAM("Publishing ");
+	prev_vel_msg = vel_msg;
+	personPos_pub.publish(vel_msg);
+
 	prevAboveAngle = aboveAngle;
 	prevAboveLength = aboveLength;
 }
@@ -172,6 +201,7 @@ void bodies_sub_cb(const k2_client::BodyArray msg){
 int main(int argc,char **argv){
 	ros::init(argc,argv,"personFollower");
 	ros::NodeHandle n;
+	n.getParam("use_coordinator",use_coordinator);
 
 	prev_time = ros::Time::now();
 
@@ -179,8 +209,15 @@ int main(int argc,char **argv){
 	signal(SIGALRM, watchdog);
 	alarm(3);
 
-	// Set up velocity command publisher
-	personPos_pub = n.advertise<geometry_msgs::Twist>("RosAria/cmd_vel",1);
+	if(use_coordinator)
+	{
+		personPos_pub = n.advertise<geometry_msgs::Twist>("cyborg_coordinator/"+my_identifier+"/RosAria/cmd_vel",1);
+	}
+	else{
+		// Set up velocity command publisher
+		personPos_pub = n.advertise<geometry_msgs::Twist>("RosAria/cmd_vel",1);
+	}
+
 
 	// Subsribe to topic "bodyArray" published by k2_klient package node startBody.cpp
 	ros::Subscriber bodies_sub = n.subscribe("head/kinect2/bodyArray", 1, bodies_sub_cb); 
@@ -189,14 +226,11 @@ int main(int argc,char **argv){
 
 	ros::Rate loop_rate(lr); //0.1
 
-	ROS_INFO_NAMED("personFollower", "personFollower: Running ROS node...");
 	while (ros::ok()){
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
-	//ros::spin();
-
-	ROS_INFO_NAMED("personFollower",  "personFollower: Quitting... \n" );
+	//ROS_INFO_NAMED("personFollower",  "personFollower: Quitting... \n" );
 
 	return 0;
 }   

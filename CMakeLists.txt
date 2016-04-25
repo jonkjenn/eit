@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   k2_client
   tf
+  cyborg_coordinator
 )
 
 find_package(Jsoncpp REQUIRED)
@@ -82,6 +83,7 @@ find_package(Jsoncpp REQUIRED)
 # generate_messages(
 #   DEPENDENCIES
 #   std_msgs
+#   message_generation
 # )
 
 ################################################
@@ -116,7 +118,7 @@ find_package(Jsoncpp REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES decision_maker
-  CATKIN_DEPENDS k2_client roscpp rospy std_msgs tf
+  CATKIN_DEPENDS k2_client roscpp rospy std_msgs tf cyborg_coordinator
   DEPENDS system_lib
 )
 
